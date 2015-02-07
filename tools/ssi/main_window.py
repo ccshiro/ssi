@@ -71,7 +71,8 @@ class main_window(QtGui.QMainWindow):
         else:
             index = self.tabs.indexOf(prev)
             self.tabs.removeTab(index)
-            self.tabs.insertTab(index, prev, 'Preview')
+            widget = spell_widget.SpellWidget(self.tabs, spell)
+            self.tabs.insertTab(index, widget, 'Preview')
             self.tabs.setCurrentIndex(index)
 
     def open_spell(self, index):
@@ -116,6 +117,7 @@ class main_window(QtGui.QMainWindow):
         # No input
         else:
             self.results.setRowCount(0)
+            self.results_updated()
 
     def code_btn_clicked(self):
         widget = code_widget.CodeWidget(self.tabs)
@@ -139,6 +141,7 @@ class main_window(QtGui.QMainWindow):
                 a.setChecked(False)
         # Remove results, tabs and toggle code and exec button
         self.results.setRowCount(0)
+        self.results_updated()
         self.tabs.clear()
         self.exec_btn.setEnabled(False)
         self.code_btn.setEnabled(True)
