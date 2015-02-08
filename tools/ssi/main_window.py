@@ -45,6 +45,7 @@ class main_window(QtGui.QMainWindow):
             self.action_icons.setChecked(True)
 
     def _query(self, query):
+        # Query spell dbc
         try:
             res = self.spells.iter(query)
         except Exception as e:
@@ -52,10 +53,10 @@ class main_window(QtGui.QMainWindow):
             msg_box.setText(str(e))
             msg_box.exec()
             return
+        # Put data into UI
         self.results.setSortingEnabled(False)
-        self.results.setRowCount(0)
+        self.results.setRowCount(len(res))
         for i in range(0, len(res)):
-            self.results.insertRow(i)
             id_item = QtGui.QTableWidgetItem()
             id_item.setData(QtCore.Qt.DisplayRole, res[i].id)
             name_item = QtGui.QTableWidgetItem()
