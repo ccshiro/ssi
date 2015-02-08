@@ -146,6 +146,7 @@
      <addaction name="action_vers_3_3_5"/>
     </widget>
     <addaction name="menu_file_version"/>
+    <addaction name="action_icons"/>
     <addaction name="separator"/>
     <addaction name="action_file_exit"/>
    </widget>
@@ -181,6 +182,14 @@
    </property>
    <property name="text">
     <string>3.3.5</string>
+   </property>
+  </action>
+  <action name="action_icons">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Wowhead Icons</string>
    </property>
   </action>
  </widget>

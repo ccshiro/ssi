@@ -1,5 +1,6 @@
 import code_widget
 import spell_widget
+import configparser
 import os
 import sys
 from PyQt4 import QtCore, QtGui, uic
@@ -24,11 +25,24 @@ class main_window(QtGui.QMainWindow):
         self.tabs.tabCloseRequested.connect(self.tab_closed)
         self.results.itemSelectionChanged.connect(self.preview_spell)
         self.results.itemDoubleClicked.connect(self.open_spell)
+
         # Menu connections
         self.version_boxes = [self.action_vers_1_12_1, self.action_vers_2_4_3,
             self.action_vers_3_3_5]
         for action in self.version_boxes:
             action.toggled.connect(self.set_vers)
+        self.action_icons.toggled.connect(self.icons_toggled)
+
+        # Config
+        opts = self.parse_config()
+        if opts['version'] == '1.12.12':
+            self.action_vers_1_12_1.setChecked(True)
+        elif opts['version'] == '2.4.3':
+            self.action_vers_2_4_3.setChecked(True)
+        elif opts['version'] == '3.3.5':
+            self.action_vers_3_3_5.setChecked(True)
+        if opts['icons']:
+            self.action_icons.setChecked(True)
 
     def _query(self, query):
         try:
@@ -66,12 +80,14 @@ class main_window(QtGui.QMainWindow):
 
         prev = self._find_tab('Preview')
         if not prev:
-            widget = spell_widget.SpellWidget(self.tabs, spell)
+            widget = spell_widget.SpellWidget(self.tabs, spell,
+                self.action_icons.isChecked())
             self.tabs.setCurrentIndex(self.tabs.addTab(widget, 'Preview'))
         else:
             index = self.tabs.indexOf(prev)
             self.tabs.removeTab(index)
-            widget = spell_widget.SpellWidget(self.tabs, spell)
+            widget = spell_widget.SpellWidget(self.tabs, spell,
+                self.action_icons.isChecked())
             self.tabs.insertTab(index, widget, 'Preview')
             self.tabs.setCurrentIndex(index)
 
@@ -86,7 +102,8 @@ class main_window(QtGui.QMainWindow):
         else:
             index = self.tabs.rowCount()
 
-        widget = spell_widget.SpellWidget(self.tabs, spell)
+        widget = spell_widget.SpellWidget(self.tabs, spell,
+            self.action_icons.isChecked())
         self.tabs.insertTab(index, widget, widget.preferred_title())
         self.tabs.setCurrentIndex(index)
 
@@ -151,8 +168,42 @@ class main_window(QtGui.QMainWindow):
         try:
             self.spells = spell.Spells(vers)
             self.exec_btn.setEnabled(True)
+            self.set_config_opt('Version', vers)
         except Exception as e:
             self.sender().setChecked(False)
             err = QtGui.QMessageBox(self)
             err.setText(str(e))
             err.exec()
+
+    def icons_toggled(self, checked):
+        self.set_config_opt('WowheadIcons', checked)
+
+    def parse_config(self):
+        config = configparser.ConfigParser()
+        path = os.path.expanduser('~/.ssi/.ssirc')
+        if os.path.exists(path):
+            try:
+                config.read(path)
+                return {'version': config['SSI']['Version'],
+                    'icons': True if
+                        config['SSI']['WowheadIcons'] == 'True' else False}
+            except:
+                pass # Write a new config if current is invalid
+
+        config['SSI'] = {'Version': 'None',
+                         'WowheadIcons': True}
+        with open(path, 'w') as f:
+            config.write(f)
+
+        return {'version': config['SSI']['Version'],
+            'icons': True if config['SSI']['WowheadIcons'] == 'True' else False}
+
+    def set_config_opt(self, opt, val):
+        """We made sure config exited at startup, if user deleted it in the
+           mean-time, that's their problem."""
+        config = configparser.ConfigParser()
+        path = os.path.expanduser('~/.ssi/.ssirc')
+        config.read(path)
+        config['SSI'][opt] = str(val)
+        with open(path, 'w') as f:
+            config.write(f)

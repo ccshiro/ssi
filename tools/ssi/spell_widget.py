@@ -1,10 +1,13 @@
 import os
+import urllib.parse
+import urllib.request
 from PyQt4 import QtCore, QtGui, QtWebKit, uic
 
 class SpellWidget(QtWebKit.QWebView):
-    def __init__(self, parent, spell):
+    def __init__(self, parent, spell, icons):
         super().__init__(parent)
         self.spell = spell
+        self.icons = icons
         self.load_html() 
         self.setHtml(self.html)
         # Note: The documentation says that external css should be located
@@ -30,8 +33,18 @@ class SpellWidget(QtWebKit.QWebView):
 
     def expand_placeholders(self):
         """Parses HTML, replacing placeholders"""
+        icon_path = ''
+        if self.icons:
+            # TODO: Placeholder
+            icon_path = 'http://static.wowhead.com/images/wow/icons/'
+            icon_path += 'large/inv_misc_elvencoins.jpg'
+        else:
+            icon_path = urllib.parse.urljoin('file:',
+                urllib.request.pathname2url(os.path.abspath('./no_icon.png')))
+
         self._replace({
             '${NAME}': self.spell.name,
             '${ID}': self.spell.id,
             '${RANK}': self.spell.rank,
+            '${ICON}': icon_path,
         })
