@@ -170,6 +170,7 @@ class main_window(QtGui.QMainWindow):
             self.spells = spell.Spells(vers)
             self.exec_btn.setEnabled(True)
             self.set_config_opt('Version', vers)
+            self.fill_qs_completer()
         except Exception as e:
             self.sender().setChecked(False)
             err = QtGui.QMessageBox(self)
@@ -208,3 +209,17 @@ class main_window(QtGui.QMainWindow):
         config['SSI'][opt] = str(val)
         with open(path, 'w') as f:
             config.write(f)
+
+    def fill_qs_completer(self):
+        """Provide auto-completion for spell names in quick-search"""
+        c = QtGui.QCompleter()
+        c.setCompletionMode(QtGui.QCompleter.PopupCompletion)
+        c.setCaseSensitivity(QtCore.Qt.CaseInsensitive)
+        model = QtGui.QStringListModel()
+        # Fill with spell names
+        names = set()
+        for s in self.spells.spell_dbc.table:
+            names.add(s.name)
+        model.setStringList(list(names))
+        c.setModel(model)
+        self.quick_search.setCompleter(c)
