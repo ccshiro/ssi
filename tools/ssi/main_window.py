@@ -60,7 +60,10 @@ class main_window(QtGui.QMainWindow):
             id_item = QtGui.QTableWidgetItem()
             id_item.setData(QtCore.Qt.DisplayRole, res[i].id)
             name_item = QtGui.QTableWidgetItem()
-            name_item .setText(str(res[i].name))
+            name = res[i].name
+            if len(res[i].rank) > 0:
+                name += ' (' + res[i].rank + ')'
+            name_item.setText(name)
             self.results.setItem(i, 0, id_item)
             self.results.setItem(i, 1, name_item)
         self.results.setSortingEnabled(True)
