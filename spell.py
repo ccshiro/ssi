@@ -33,8 +33,9 @@ class Spells:
 
     def iter(self, code):
         res = []
+        regexp = __import__('re')
         for spell in self.spell_dbc.table:
-            if eval(code, {'spell': spell}) == True:
+            if eval(code, {'spell': spell, 're': regexp}) == True:
                 res.append(spell)
         return res
 
