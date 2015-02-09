@@ -85,13 +85,13 @@ class main_window(QtGui.QMainWindow):
         prev = self._find_tab('Preview')
         if not prev:
             widget = spell_widget.SpellWidget(self.tabs, spell,
-                self.action_icons.isChecked())
+                self.action_icons.isChecked(), self.spells)
             self.tabs.setCurrentIndex(self.tabs.addTab(widget, 'Preview'))
         else:
             index = self.tabs.indexOf(prev)
             self.tabs.removeTab(index)
             widget = spell_widget.SpellWidget(self.tabs, spell,
-                self.action_icons.isChecked())
+                self.action_icons.isChecked(), self.spells)
             self.tabs.insertTab(index, widget, 'Preview')
             self.tabs.setCurrentIndex(index)
 
@@ -107,7 +107,7 @@ class main_window(QtGui.QMainWindow):
             index = self.tabs.rowCount()
 
         widget = spell_widget.SpellWidget(self.tabs, spell,
-            self.action_icons.isChecked())
+            self.action_icons.isChecked(), self.spells)
         self.tabs.insertTab(index, widget, widget.preferred_title())
         self.tabs.setCurrentIndex(index)
 
