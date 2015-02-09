@@ -22,13 +22,13 @@ class Spells:
             raise err
 
         self.spell_dbc = dbc.Dbc(spell_path, self._mapping_for_vers(vers_str),
-            Spell)
-        self.spell_icon_dbc = dbc.Dbc(spell_icon_path, self._icon_mapping()) 
+            'id', Spell)
+        self.spell_icon_dbc = dbc.Dbc(spell_icon_path, self._icon_mapping(),
+            'id')
 
     def get_icon_path(self, spell):
         """Returns icon path of spell"""
-        return next(
-            x for x in self.spell_icon_dbc.table if x.id == spell.icon_id).path
+        return self.spell_icon_dbc.table[spell.icon_id].path
 
     def _mapping_for_vers(self, vers_str):
         if vers_str == '2.4.3':
@@ -42,7 +42,7 @@ class Spells:
     def iter(self, code):
         res = []
         regexp = __import__('re')
-        for spell in self.spell_dbc.table:
+        for _, spell in self.spell_dbc.table.items():
             if eval(code, {'spell': spell, 're': regexp}) == True:
                 res.append(spell)
         return res

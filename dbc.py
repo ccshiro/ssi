@@ -10,11 +10,12 @@ class DbcEntry:
     pass
 
 class Dbc:
-    def __init__(self, filename, mappings, type=DbcEntry):
+    def __init__(self, filename, mappings, index, type=DbcEntry):
         """DBC file is assumed to be little-endian encoded"""
         f = open(filename, 'rb')
-        self.type = type
         self.mappings = mappings
+        self.index = index
+        self.type = type
         try:
             self._parse(f)
         finally:
@@ -41,9 +42,10 @@ class Dbc:
         string_table = f.read(string_size)
 
         # Create table from provided mapping
-        self.table = [None] * rows
+        self.table = {}
         for i in range(0, rows):
-            self.table[i] = self._map_single(bin_blob[i], string_table)
+            item = self._map_single(bin_blob[i], string_table)
+            self.table[getattr(item, self.index)] = item
 
     def _map_single(self, raw, string_table):
         entry = self.type()

@@ -53,6 +53,27 @@ class main_window(QtGui.QMainWindow):
             msg_box.setText(str(e))
             msg_box.exec()
             return
+        self._display_results(res)
+
+    def _query_name(self, name):
+        name = name.replace('"', '\"').lower()
+        res = self.spells.iter('"' + name + '" in spell.name.lower()')
+        self._display_results(res)
+
+    def _query_id(self, id):
+        # Query spell dbc
+        try:
+            res = [self.spells.spell_dbc.table[id]]
+        except KeyError:
+            res = []
+        self._display_results(res)
+
+    def _display_results(self, res):
+        # Clear current preview
+        self.results.clearSelection()
+        prev = self._find_tab('Preview')
+        if prev:
+            self.tabs.removeTab(self.tabs.indexOf(prev))
         # Put data into UI
         self.results.setSortingEnabled(False)
         self.results.setRowCount(len(res))
@@ -68,6 +89,9 @@ class main_window(QtGui.QMainWindow):
             self.results.setItem(i, 1, name_item)
         self.results.setSortingEnabled(True)
         self.results_updated()
+        # For exactly one item, preview it as well
+        if len(res) == 1:
+            self.results.selectRow(0)
     
     def _find_tab(self, name):
         for i in range(0, self.tabs.count()):
@@ -80,7 +104,7 @@ class main_window(QtGui.QMainWindow):
             return
 
         id = int(self.sender().selectedItems()[0].text())
-        spell = next(s for s in self.spells.spell_dbc.table if s.id == id)
+        spell = self.spells.spell_dbc.table[id]
 
         prev = self._find_tab('Preview')
         if not prev:
@@ -97,7 +121,7 @@ class main_window(QtGui.QMainWindow):
 
     def open_spell(self, index):
         id = int(self.results.item(index.row(), 0).text())
-        spell = next(s for s in self.spells.spell_dbc.table if s.id == id)
+        spell = self.spells.spell_dbc.table[id]
 
         prev = self._find_tab('Preview')
         if prev:
@@ -128,10 +152,9 @@ class main_window(QtGui.QMainWindow):
         if len(quick.text()) > 0:
             text = quick.text()
             if text.isdigit():
-                self._query('spell.id == ' + text)
+                self._query_id(int(text))
             else:
-                text = text.replace('"', '\"').lower()
-                self._query('"' + text + '" in spell.name.lower()')
+                self._query_name(text)
         # Code search
         elif code and len(code.toPlainText()) > 0:
             self._query(code.toPlainText())
@@ -174,7 +197,7 @@ class main_window(QtGui.QMainWindow):
             self.exec_btn.setEnabled(True)
             self.set_config_opt('Version', vers)
             self.fill_qs_completer()
-        except Exception as e:
+        except RuntimeError as e:
             self.sender().setChecked(False)
             err = QtGui.QMessageBox(self)
             err.setText(str(e))
@@ -221,7 +244,7 @@ class main_window(QtGui.QMainWindow):
         model = QtGui.QStringListModel()
         # Fill with spell names
         names = set()
-        for s in self.spells.spell_dbc.table:
+        for _, s in self.spells.spell_dbc.table.items():
             names.add(s.name)
         model.setStringList(list(names))
         c.setModel(model)
