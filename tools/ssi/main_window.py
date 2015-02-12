@@ -26,14 +26,20 @@ class main_window(QtGui.QMainWindow):
         self.results.itemSelectionChanged.connect(self.preview_spell)
         self.results.itemDoubleClicked.connect(self.open_spell)
 
-        # Menu connections
+        # Version menu connections
         self.version_boxes = [self.action_vers_1_12_1, self.action_vers_2_4_3,
             self.action_vers_3_3_5]
         for action in self.version_boxes:
             action.toggled.connect(self.set_vers)
+        # Code completion menu connection
+        self.action_code_always.toggled.connect(self.set_auto_complete)
+        self.action_code_space.toggled.connect(self.set_auto_complete)
+        self.action_code_never.toggled.connect(self.set_auto_complete)
+        # Icon menu connection
         self.action_icons.toggled.connect(self.icons_toggled)
 
         # Config
+        # Version
         opts = self.parse_config()
         if opts['version'] == '1.12.12':
             self.action_vers_1_12_1.setChecked(True)
@@ -41,6 +47,15 @@ class main_window(QtGui.QMainWindow):
             self.action_vers_2_4_3.setChecked(True)
         elif opts['version'] == '3.3.5':
             self.action_vers_3_3_5.setChecked(True)
+        # Code completion
+        self.auto_complete = opts['auto_complete']
+        if self.auto_complete == 'full':
+            self.action_code_always.setChecked(True)
+        elif self.auto_complete == 'key':
+            self.action_code_space.setChecked(True)
+        elif self.auto_complete == 'none':
+            self.action_code_never.setChecked(True)
+        # Icons
         if opts['icons']:
             self.action_icons.setChecked(True)
 
@@ -179,7 +194,7 @@ class main_window(QtGui.QMainWindow):
             self.results_updated()
 
     def code_btn_clicked(self):
-        widget = code_widget.CodeWidget(self.tabs)
+        widget = code_widget.CodeWidget(self.tabs, self.auto_complete)
         self.tabs.insertTab(0, widget, 'Code')
         self.tabs.setCurrentIndex(0)
         self.code_btn.setEnabled(False)
@@ -210,7 +225,7 @@ class main_window(QtGui.QMainWindow):
         try:
             self.spells = spell.Spells(vers)
             self.exec_btn.setEnabled(True)
-            self.set_config_opt('Version', vers)
+            self.set_config_opt('version', vers)
             self.fill_qs_completer()
         except RuntimeError as e:
             self.sender().setChecked(False)
@@ -218,8 +233,37 @@ class main_window(QtGui.QMainWindow):
             err.setText(str(e))
             err.exec()
 
+    def set_auto_complete(self, checked):
+        if not checked:
+            return
+
+        # Uncheck other boxes
+        v = [self.action_code_always, self.action_code_space,
+            self.action_code_never]
+        for a in v:
+            if a != self.sender():
+                a.setChecked(False)
+
+        if self.sender() == self.action_code_always:
+            t = 'full'
+        elif self.sender() == self.action_code_space:
+            t = 'key'
+        # NOTE: none is probably superfluous given how rare accidentally
+        #       hitting ^space is
+        elif self.sender() == self.action_code_never:
+            t = 'none'
+
+        # Switch completion style
+        self.set_config_opt('auto_complete', t)
+        self.auto_complete = t
+
+        # Update code tab
+        code = self._find_tab('Code')
+        if code:
+            code.set_completion_type(t)
+
     def icons_toggled(self, checked):
-        self.set_config_opt('WowheadIcons', checked)
+        self.set_config_opt('wowheadicons', checked)
 
     def parse_config(self):
         config = configparser.ConfigParser()
@@ -227,19 +271,22 @@ class main_window(QtGui.QMainWindow):
         if os.path.exists(path):
             try:
                 config.read(path)
-                return {'version': config['SSI']['Version'],
+                return {'version': config['SSI']['version'],
                     'icons': True if
-                        config['SSI']['WowheadIcons'] == 'True' else False}
+                        config['SSI']['wowheadicons'] == 'True' else False,
+                    'auto_complete': config['SSI']['auto_complete']}
             except:
                 pass # Write a new config if current is invalid
 
-        config['SSI'] = {'Version': 'None',
-                         'WowheadIcons': True}
+        config['SSI'] = {'version': 'None',
+                         'wowheadicons': True,
+                         'auto_complete': 'full'}
         with open(path, 'w') as f:
             config.write(f)
 
-        return {'version': config['SSI']['Version'],
-            'icons': True if config['SSI']['WowheadIcons'] == 'True' else False}
+        return {'version': config['SSI']['version'],
+            'icons': True if config['SSI']['wowheadicons'] == 'True' else False,
+            'auto_complete': config['SSI']['auto_complete']}
 
     def set_config_opt(self, opt, val):
         """We made sure config exited at startup, if user deleted it in the

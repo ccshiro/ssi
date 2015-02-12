@@ -1,13 +1,16 @@
 from PyQt4 import QtCore, QtGui
 
 class CodeWidget(QtGui.QTextEdit):
-    def __init__(self, parent):
+    def __init__(self, parent, completion_type):
+        """completion_type: 'full', 'key' or 'none'"""
         super().__init__(parent)
         self.completer = QtGui.QCompleter()
         self.completer.setWidget(self)
         self.completer.setCompletionMode(QtGui.QCompleter.PopupCompletion)
         self.completer.setCaseSensitivity(QtCore.Qt.CaseInsensitive)
         self.completer.activated.connect(self.auto_complete)
+
+        self.completion_type = completion_type
 
         model = QtGui.QStringListModel()
         model.setStringList(self.get_toplevel_completers())
@@ -24,6 +27,9 @@ class CodeWidget(QtGui.QTextEdit):
         # Set tab stop to be the length of 4 spaces
         metrics = QtGui.QFontMetrics(font)
         self.setTabStopWidth(4 * metrics.width(' '))
+
+    def set_completion_type(self, t):
+        self.completion_type = t
 
     def auto_complete(self, s):
         """ Insert selected completion (s) at end of current word """
@@ -61,6 +67,9 @@ class CodeWidget(QtGui.QTextEdit):
             e.key() == QtCore.Qt.Key_Return):
             if self.completer.popup().isVisible():
                 self.completer.popup().hide()
+                return
+
+        if self.completion_type == 'none':
             return
 
         # Start a new popup if necessary
@@ -85,6 +94,9 @@ class CodeWidget(QtGui.QTextEdit):
         if (e.modifiers() & QtCore.Qt.ControlModifier and
             e.key() == QtCore.Qt.Key_Space):
             forced = True
+
+        if self.completion_type == 'key' and not forced:
+            return
 
         # Only auto-complete empty lines if ^space was invoked
         if len(context) == 0 and not forced:

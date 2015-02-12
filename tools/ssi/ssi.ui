@@ -145,7 +145,16 @@
      <addaction name="action_vers_2_4_3"/>
      <addaction name="action_vers_3_3_5"/>
     </widget>
+    <widget class="QMenu" name="menu_auto_completion">
+     <property name="title">
+      <string>Code Completion</string>
+     </property>
+     <addaction name="action_code_always"/>
+     <addaction name="action_code_space"/>
+     <addaction name="action_code_never"/>
+    </widget>
     <addaction name="menu_file_version"/>
+    <addaction name="menu_auto_completion"/>
     <addaction name="action_icons"/>
     <addaction name="separator"/>
     <addaction name="action_file_exit"/>
@@ -190,6 +199,30 @@
    </property>
    <property name="text">
     <string>Wowhead Icons</string>
+   </property>
+  </action>
+  <action name="action_code_always">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Always</string>
+   </property>
+  </action>
+  <action name="action_code_space">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>On ^space</string>
+   </property>
+  </action>
+  <action name="action_code_never">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Never</string>
    </property>
   </action>
  </widget>
