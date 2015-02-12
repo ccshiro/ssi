@@ -43,7 +43,7 @@ class SpellWidget(QtWebKit.QWebView):
         """Parses HTML, replacing placeholders"""
         icon_path = ''
         if self.icons:
-            icon = self.spells.get_icon_path(self.spell).split('\\')[-1]
+            icon = self.spells.icon_path(self.spell).split('\\')[-1]
             icon_path = 'http://static.wowhead.com/images/wow/icons/large/'
             icon_path += icon.lower() + '.jpg'
         else:

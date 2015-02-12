@@ -13,6 +13,18 @@ class CodeWidget(QtGui.QTextEdit):
         model.setStringList(self.get_toplevel_completers())
         self.completer.setModel(model)
 
+        # Set code-friendly monospace font
+        font = QtGui.QFont()
+        font.setFamily('Monospace');
+        font.setStyleHint(QtGui.QFont.Monospace)
+        font.setFixedPitch(True)
+        font.setPointSize(12)
+        self.setFont(font)
+
+        # Set tab stop to be the length of 4 spaces
+        metrics = QtGui.QFontMetrics(font)
+        self.setTabStopWidth(4 * metrics.width(' '))
+
     def auto_complete(self, s):
         """ Insert selected completion (s) at end of current word """
         cursor = self.textCursor()
@@ -30,6 +42,18 @@ class CodeWidget(QtGui.QTextEdit):
 
         # Relay key press to QTextEdit
         super().keyPressEvent(e)
+
+        # Insert indentation if necessary when enter is pressed
+        if e.key() == QtCore.Qt.Key_Enter or e.key() == QtCore.Qt.Key_Return:
+            store = self.textCursor()
+            self.moveCursor(QtGui.QTextCursor.Up)
+            self.moveCursor(QtGui.QTextCursor.End, QtGui.QTextCursor.KeepAnchor)
+            prev_line = self.textCursor().selectedText()
+            self.setTextCursor(store)
+            for s in prev_line:
+                if s != '\t':
+                    break
+                self.insertPlainText('\t')
 
         # Key presses that hide current popup
         if (e.key() == QtCore.Qt.Key_Space or
@@ -50,8 +74,11 @@ class CodeWidget(QtGui.QTextEdit):
         tc.select(QtGui.QTextCursor.LineUnderCursor)
         context = tc.selectedText()
         if len(context) > 0:
-            context = str.split(context)[-1]
-            self.update_completion_list(context)
+            try:
+                context = str.split(context)[-1]
+                self.update_completion_list(context)
+            except IndexError:
+                return
 
         # See if ^space was invoked
         forced = False

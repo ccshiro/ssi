@@ -55,6 +55,17 @@ class main_window(QtGui.QMainWindow):
             return
         self._display_results(res)
 
+    def _exec(self, code):
+        # Uses exec() instead of query's eval()
+        try:
+            res = self.spells.execute(code, 'res')
+        except Exception as e:
+            msg_box = QtGui.QMessageBox()
+            msg_box.setText(str(e))
+            msg_box.exec()
+            return
+        self._display_results(res)
+
     def _query_name(self, name):
         name = name.replace('"', '\"').lower()
         res = self.spells.iter('"' + name + '" in spell.name.lower()')
@@ -157,7 +168,11 @@ class main_window(QtGui.QMainWindow):
                 self._query_name(text)
         # Code search
         elif code and len(code.toPlainText()) > 0:
-            self._query(code.toPlainText())
+            text = code.toPlainText()
+            if text.startswith('res = []'):
+                self._exec(text)
+            else:
+                self._query(code.toPlainText())
         # No input
         else:
             self.results.setRowCount(0)

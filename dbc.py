@@ -1,10 +1,17 @@
 import struct
 
 class Mapping:
-    def __init__(self, r, t, i):
-        self.index = r
-        self.type = t
-        self.identifier = i
+    def __init__(self, index, type, id, count = 1):
+        """
+            index: index in DBC
+            type:  python type to cast bytes to
+            id:    attribute name to map to
+            count: make list of these many consecutive items under same id
+        """
+        self.index = index
+        self.type = type
+        self.identifier = id
+        self.count = count
 
 class DbcEntry:
     pass
@@ -50,23 +57,27 @@ class Dbc:
     def _map_single(self, raw, string_table):
         entry = self.type()
         for mapping in self.mappings:
-            if mapping.type == str:
-                index = struct.unpack_from('<I', raw, mapping.index * 4)[0]
-                bstr = []
-                while True:
-                    if string_table[index] == 0:
-                        break
-                    bstr.append(string_table[index])
-                    index += 1
-                # TODO: Are strings actually utf-8 encoded?
-                s = bytes(bstr).decode('utf-8')
-                setattr(entry, mapping.identifier, s)
-            elif mapping.type == int:
-                v = struct.unpack_from('<I', raw, mapping.index * 4)[0]
-                setattr(entry, mapping.identifier, v)
-            elif mapping.type == float:
-                v = struct.unpack_from('<I', raw, mapping.index * 4)[0]
-                setattr(entry, mapping.identifier, v)
+            l = []
+            for _ in range(mapping.count):
+                if mapping.type == str:
+                    index = struct.unpack_from('<I', raw, mapping.index * 4)[0]
+                    bstr = []
+                    while True:
+                        if string_table[index] == 0:
+                            break
+                        bstr.append(string_table[index])
+                        index += 1
+                    # TODO: Are strings actually utf-8 encoded?
+                    v = bytes(bstr).decode('utf-8')
+                elif mapping.type == int:
+                    v = struct.unpack_from('<I', raw, mapping.index * 4)[0]
+                elif mapping.type == float:
+                    v = struct.unpack_from('<f', raw, mapping.index * 4)[0]
+                else:
+                    raise RuntimeError
+                l.append(v)
+            if len(l) <= 1:
+                setattr(entry, mapping.identifier, l[0])
             else:
-                raise RuntimeError
+                setattr(entry, mapping.identifier, l)
         return entry
