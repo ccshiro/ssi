@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Help</title>
+  </head>
+
+  <body>
+    <div class="container-fluid">
+      <h2>Introduction</h2>
+      <p>
+        Shiro's Spell Inspector has three ways you can search for spells, with
+        increasing control.
+      </p>
+      <p>
+        The modes are:
+        <ol>
+          <li>Quick Search</li>
+          <li>Expression Search</li>
+          <li>Code Search</li>
+        </ol>
+        The following three sections goes into the modes in detail.
+      </p>
+      <p>
+        Note: If Quick Search is non-empty it takes precedence over the Code
+        tab.
+      </p>
+    </div>
+
+    <div class="container-fluid">
+      <h2>Quick Search</h2>
+      <p>
+        Quick Search is accessed by the top-right line edit. If an integer is
+        entered, the search will be for spell ids. Otherwise, the search will be
+        a case-insensitive match of spell names. The line edit has
+        auto-completion for names that exist in the loaded DBC.
+      </p>
+    </div>
+
+    <div class="container-fluid">
+      <h2>Expression Search</h2>
+      <p>
+        Expression search is accessed by pressing the Code button and entering
+        text into the Code tab that appears. The expression is a Python 3
+        expression that is evaluated for each spell in the DBC. If the
+        expression yields True, the spell will appear in the result box.
+      </p>
+
+      <p>
+        When entering expressions you have access to the following three global
+        variables:
+
+        <ul>
+          <li>spell - the current evaluated spell object</li>
+          <li>spells - common functionality (see below)</li>
+          <li>re - python's regex library</li>
+        </ul>
+      </p>
+
+      <p>
+        <h3>An Example</h3>
+        The following example finds all spells with a duration of 30 minutes.
+
+<pre>
+spells.duration(spell) == 30 * 60 * 1000
+</pre>
+
+      </p>
+    </div>
+
+    <div class="container-fluid">
+      <h2>Code Search</h2>
+      <p>
+        Code search is accessed by pressing the Code button and beginning the
+        script with <code>res = []</code>. If the code box begins as such the
+        entire search uses exec() instead of eval(). You manually append spells
+        of interest to res, which is the list of spells that will appear in the
+        result box.
+      </p>
+
+      <p>
+        When entering code you have access to the following global variables:
+
+        <ul>
+          <li>
+            dict - dictionary of all spells: key is id and value is spell object
+          </li>
+          <li>spells - common functionality (see below)</li>
+        </ul>
+      </p>
+
+      <p>
+        <h3>An Example</h3>
+        The following example finds a single random spell with 35 yards range.
+
+<pre>
+res = []
+import random
+
+for _, spell in dict.items():
+    if spells.range(spell).max == 35:
+        res.append(spell)
+res = [random.choice(res)]
+</pre>
+
+      </p>
+    </div>
+
+    <div class="container-fluid">
+      <h2>Spells object</h2>
+
+      <p>
+        With code-completion the <var>spell</var> object's attributes should be
+        self-explanatory enough. The <var>spells</var> object, however, has some
+        methods that exposes more complex functionality. They are listed and
+        explained in this table.
+
+        <table class="table table-striped">
+          <caption>Spells' Methods</caption>
+          <thead>
+            <tr>
+              <th>Method</th>
+              <th>Arguments</th>
+              <th>Returns</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>cast_time</td>
+              <td>spell</td>
+              <td>cast-time in milliseconds</td>
+            </tr>
+            <tr>
+              <td>duration</td>
+              <td>spell</td>
+              <td>spell duration in milliseconds</td>
+            </tr>
+            <tr>
+              <td>icon_path</td>
+              <td>spell</td>
+              <td>str of icon-path</td>
+            </tr>
+            <tr>
+              <td>radius</td>
+              <td>spell</td>
+              <td>[eff 0, eff 1, eff 2]</td>
+            </tr>
+            <tr>
+              <td>range</td>
+              <td>spell</td>
+              <td>obj with attr: min and max</td>
+            </tr>
+          </tbody>
+        </table>
+      </p>
+    </div>
+  </body>
+</html>

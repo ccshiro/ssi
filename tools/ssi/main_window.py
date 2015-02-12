@@ -3,7 +3,7 @@ import spell_widget
 import configparser
 import os
 import sys
-from PyQt4 import QtCore, QtGui, uic
+from PyQt4 import QtCore, QtGui, QtWebKit, uic
 
 sys.path.append(os.path.relpath('../../'))
 import spell
@@ -37,6 +37,9 @@ class main_window(QtGui.QMainWindow):
         self.action_code_never.toggled.connect(self.set_auto_complete)
         # Icon menu connection
         self.action_icons.toggled.connect(self.icons_toggled)
+        # Help and Exit menu connetions
+        self.action_help.triggered.connect(self.show_help)
+        self.action_exit.triggered.connect(self.exit_program)
 
         # Config
         # Version
@@ -264,6 +267,17 @@ class main_window(QtGui.QMainWindow):
 
     def icons_toggled(self, checked):
         self.set_config_opt('wowheadicons', checked)
+
+    def show_help(self):
+        widget = QtWebKit.QWebView()
+        url = QtCore.QUrl.fromLocalFile(os.path.abspath('help.html'))
+        widget.setUrl(url)
+        widget.settings().setUserStyleSheetUrl(QtCore.QUrl.fromLocalFile(
+            os.path.abspath('../../bootstrap/css/bootstrap.min.css')))
+        self.tabs.setCurrentIndex(self.tabs.addTab(widget, 'Help'))
+
+    def exit_program(self):
+        sys.exit(0)
 
     def parse_config(self):
         config = configparser.ConfigParser()

@@ -157,11 +157,13 @@
     <addaction name="menu_auto_completion"/>
     <addaction name="action_icons"/>
     <addaction name="separator"/>
-    <addaction name="action_file_exit"/>
+    <addaction name="action_help"/>
+    <addaction name="separator"/>
+    <addaction name="action_exit"/>
    </widget>
    <addaction name="menu_file"/>
   </widget>
-  <action name="action_file_exit">
+  <action name="action_exit">
    <property name="text">
     <string>Exit</string>
    </property>
@@ -223,6 +225,11 @@
    </property>
    <property name="text">
     <string>Never</string>
+   </property>
+  </action>
+  <action name="action_help">
+   <property name="text">
+    <string>Help</string>
    </property>
   </action>
  </widget>
