@@ -2,25 +2,354 @@
 <html lang="en-us">
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>${NAME}</title>
-    <link rel="stylesheet" type="text/css" href="template.css" />
   </head>
 
   <body>
-    <div class="section">
-      <div id="spell-name">
-        <h1>${NAME} (${ID})</h1>
+    <!-- Navbar -->
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <ul class="nav navbar-nav">
+          <li><a href="#overview">Overview</a></li>
+          <li><a href="#basic">Basic</a></li>
+          <li><a href="#advanced">Advanced</a></li>
+          <li><a href="#eff0">Effect 0</a></li>
+          <li><a href="#eff1">Effect 1</a></li>
+          <li><a href="#eff2">Effect 2</a></li>
+        </ul>
       </div>
-      <div id="spell-icon">
-        <img src="${ICON}" />
+    </nav>
+
+    <div class="container-fluid">
+      <!-- Name, Icon and Tooltip row -->
+        <a name="overview"></a>
+        <h3 class="page-header" style="margin-top: -10px">
+          Overview
+        </h3>
+        <div class="col-sm-2">
+          <img src="${ICON}" alt="Icon">
+        </div>
+        <div class="col-sm-10">
+          <div class="row">
+            <div class="col-sm-12">
+              <strong>${NAME}</strong> (${ID})
+            </div>
+          </div>
+          <div class="row small">
+            <div class="col-sm-12">
+              ${RANK}
+            </div>
+          </div>
+          <div class="row small">
+            <div class="col-sm-12">
+              ${TOOLTIP}
+            </div>
+          </div>
+        </div>
+
+      <div class="row"></div>
+
+      <!-- Basic Information -->
+      <a name="basic"></a>
+      <h3 class="page-header">
+        Basic
+      </h3>
+      <div class="row small">
+        <div class="col-sm-4">
+          Cast-time: <strong>${CAST_TIME_HUMAN}</strong> (${CAST_TIME_INDEX})
+        </div>
+        <div class="col-sm-4">
+          Duration: <strong>${DURATION_HUMAN}</strong> (${DURATION_INDEX})
+        </div>
+        <div class="col-sm-4">
+          Range: <strong>${RANGE_MIN}-${RANGE_MAX} yards</strong>
+            (${RANGE_INDEX})
+        </div>
+        <div class="col-sm-4">
+          Cost: <strong>${POWER} ${POWER_TYPE}</strong>
+        </div>
+        <div class="col-sm-4">
+          Level: <strong>${LEVEL}</strong> (Base: ${BASE_LEVEL} Max:
+            ${MAX_LEVEL})
+        </div>
+        <div class="col-sm-4">
+          Spell School: <strong>${SCHOOL_MASK}</strong> (${SCHOOLS})
+        </div>
+        <div class="col-sm-4">
+          Cooldown: <strong>${COOLDOWN}</strong>
+        </div>
+        <div class="col-sm-4">
+          GCD: <strong>${GCD}</strong>
+        </div>
       </div>
-    </div>
-    
-    <div class="section">
-      <ul>
-        <li>${RANK}</li>
-      </ul>
+
+      <div class="row"></div>
+
+      <!-- Advanced Information -->
+      <a name="advanced"></a>
+      <h3 class="page-header">
+        Advanced
+      </h3>
+
+      <div class="row small">
+        <div class="col-sm-4">
+          Category: <strong>${CATEGORY}</strong>
+        </div>
+        <div class="col-sm-4">
+          Category Cooldown: <strong>${CATEGORY_COOLDOWN}</strong>
+        </div>
+        <div class="col-sm-4">
+          GCD Category: <strong>${GCD_CATEGORY}</strong>
+        </div>
+        <div class="col-sm-4">
+          Dispel Type: <strong>${DISPEL_TYPE}</strong>
+        </div>
+        <div class="col-sm-4">
+          Damage Class: <strong>${DAMAGE_CLASS}</strong>
+        </div>
+        <div class="col-sm-4">
+          Prevention Type: <strong>${PREVENTION_TYPE}</strong>
+        </div>
+        <div class="col-sm-4">
+          Mechanic: <strong>${MECHANIC}</strong>
+        </div>
+        <div class="col-sm-4">
+          Target Mask: <strong>${TARGET_MASK}</strong>
+        </div>
+        <div class="col-sm-4">
+          Max Target Level: <strong>${MAX_TARGET_LEVEL}</strong>
+        </div>
+        <div class="col-sm-4">
+          Max Target Level: <strong>${MAX_TARGETS}</strong>
+        </div>
+        <div class="col-sm-4">
+          Spell Family: <strong>${SPELL_FAMILY}</strong>
+        </div>
+        <div class="col-sm-4">
+          Spell Mask: <strong>${SPELL_MASK}</strong>
+        </div>
+        <div class="col-sm-4">
+          Equipped Class: <strong>${EQUIPPED_ITEM_CLASS}</strong>
+        </div>
+        <div class="col-sm-4">
+          Equipped Sub-Mask: <strong>${EQUIPPED_ITEM_SUBCLASS}</strong>
+        </div>
+        <div class="col-sm-4">
+          Equipped Inv. Mask: <strong>${EQUIPPED_ITEM_INVMASK}</strong>
+        </div>
+        <div class="col-sm-4">
+          Stances: <strong>${STANCES}</strong>
+        </div>
+        <div class="col-sm-4">
+          Stances Not: <strong>${STANCES_NOT}</strong>
+        </div>
+        <div class="col-sm-4">
+          Proc: <strong>${PROC_FLAGS}</strong> <strong>${PROC_CHANCE}%</strong>
+            (${PROC_CHARGES} charges)
+        </div>
+        <div class="col-sm-4">
+          Cast Interrupt: <strong>${INTERRUPT_FLAGS}</strong>
+        </div>
+        <div class="col-sm-4">
+          Aura Interrupt: <strong>${AURA_INTERRUPT_FLAGS}</strong>
+        </div>
+        <div class="col-sm-4">
+          Channel Interrupt: <strong>${CHANNEL_INTERRUPT_FLAGS}</strong>
+        </div>
+        <div class="col-sm-8">
+          Icon: <strong>${ICON_PATH}</strong> (${ICON_ID})
+        </div>
+      </div>
+
+      <!-- Attributes table -->
+      <div class="row small">
+        <div class="col-sm-12">
+          <table class="table table-striped">
+            <caption>Attributes</caption>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Mask</th>
+                <th>Values</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">0</th>
+                <td>${ATTR0}</td>
+                <td>${ATTR0_STR}</td>
+              </tr>
+              <tr>
+                <th scope="row">1</th>
+                <td>${ATTR1}</td>
+                <td>${ATTR1_STR}</td>
+              </tr>
+              <tr>
+                <th scope="row">2</th>
+                <td>${ATTR2}</td>
+                <td>${ATTR2_STR}</td>
+              </tr>
+              <tr>
+                <th scope="row">3</th>
+                <td>${ATTR3}</td>
+                <td>${ATTR3_STR}</td>
+              </tr>
+              <tr>
+                <th scope="row">4</th>
+                <td>${ATTR4}</td>
+                <td>${ATTR4_STR}</td>
+              </tr>
+              <tr>
+                <th scope="row">5</th>
+                <td>${ATTR5}</td>
+                <td>${ATTR5_STR}</td>
+              </tr>
+              <tr>
+                <th scope="row">6</th>
+                <td>${ATTR6}</td>
+                <td>${ATTR6_STR}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Effect 0 -->
+      <a name="eff0"></a>
+      <h3 class="page-header">
+        Effect 0:
+      </h3>
+
+      <div class="row">
+        <div class="col-sm-12">
+          Effect: <strong>${EFF0_EFFECT_STR}</strong> (${EFF0_EFFECT})
+        </div>
+        <div class="col-sm-12">
+          Formula: <strong>${EFF0_FORMULA}</strong>
+        </div>
+        <div class="col-sm-6">
+          Damage Multiplier: <strong>${EFF0_DMG_MULTIPLIER}</strong>
+        </div>
+        <div class="col-sm-6">
+          Multiple Value: <strong>${EFF0_MULTIPLE_VALUE}</strong>
+        </div>
+        <div class="col-sm-12">
+          Aura: <strong>${EFF0_AURA_STR}</strong> (${EFF0_AURA})
+            Amplitude: <strong>${EFF0_AMPLITUDE}</strong>
+        </div>
+        <div class="col-sm-12">
+          Targets: <strong>${EFF0_TARGET_A_STR}</strong> (${EFF0_TARGET_A}),
+            <strong>${EFF0_TARGET_B_STR}</strong> (${EFF0_TARGET_B})
+            (Chain: <strong>${EFF0_CHAIN}</strong>)
+        </div>
+        <div class="col-sm-12">
+          Radius: <strong>${EFF0_RADIUS} yards</strong> (${EFF0_RADIUS_INDEX})
+        </div>
+        <div class="col-sm-4">
+          MiscA: <strong>${EFF0_MISC_A}</strong>
+        </div>
+        <div class="col-sm-4">
+          MiscB: <strong>${EFF0_MISC_B}</strong>
+        </div>
+        <div class="col-sm-4">
+          Triggers: <strong>${EFF0_TRIGGER}</strong>
+        </div>
+        <div class="col-sm-4">
+          Mechanic: <strong>${EFF0_MECHANIC}</strong>
+        </div>
+      </div>
+
+      <!-- Effect 1 -->
+      <a name="eff1"></a>
+      <h3 class="page-header">
+        Effect 1:
+      </h3>
+
+      <div class="row">
+        <div class="col-sm-12">
+          Effect: <strong>${EFF1_EFFECT_STR}</strong> (${EFF1_EFFECT})
+        </div>
+        <div class="col-sm-12">
+          Formula: <strong>${EFF1_FORMULA}</strong>
+        </div>
+        <div class="col-sm-6">
+          Damage Multiplier: <strong>${EFF1_DMG_MULTIPLIER}</strong>
+        </div>
+        <div class="col-sm-6">
+          Multiple Value: <strong>${EFF1_MULTIPLE_VALUE}</strong>
+        </div>
+        <div class="col-sm-12">
+          Aura: <strong>${EFF1_AURA_STR}</strong> (${EFF1_AURA})
+            Amplitude: <strong>${EFF1_AMPLITUDE}</strong>
+        </div>
+        <div class="col-sm-12">
+          Targets: <strong>${EFF1_TARGET_A_STR}</strong> (${EFF1_TARGET_A}),
+            <strong>${EFF1_TARGET_B_STR}</strong> (${EFF1_TARGET_B})
+            (Chain: <strong>${EFF1_CHAIN}</strong>)
+        </div>
+        <div class="col-sm-12">
+          Radius: <strong>${EFF1_RADIUS} yards</strong> (${EFF1_RADIUS_INDEX})
+        </div>
+        <div class="col-sm-4">
+          MiscA: <strong>${EFF1_MISC_A}</strong>
+        </div>
+        <div class="col-sm-4">
+          MiscB: <strong>${EFF1_MISC_B}</strong>
+        </div>
+        <div class="col-sm-4">
+          Triggers: <strong>${EFF1_TRIGGER}</strong>
+        </div>
+        <div class="col-sm-4">
+          Mechanic: <strong>${EFF1_MECHANIC}</strong>
+        </div>
+      </div>
+
+      <!-- Effect 2 -->
+      <a name="eff2"></a>
+      <h3 class="page-header">
+        Effect 2:
+      </h3>
+
+      <div class="row">
+        <div class="col-sm-12">
+          Effect: <strong>${EFF2_EFFECT_STR}</strong> (${EFF2_EFFECT})
+        </div>
+        <div class="col-sm-12">
+          Formula: <strong>${EFF2_FORMULA}</strong>
+        </div>
+        <div class="col-sm-6">
+          Damage Multiplier: <strong>${EFF2_DMG_MULTIPLIER}</strong>
+        </div>
+        <div class="col-sm-6">
+          Multiple Value: <strong>${EFF2_MULTIPLE_VALUE}</strong>
+        </div>
+        <div class="col-sm-12">
+          Aura: <strong>${EFF2_AURA_STR}</strong> (${EFF2_AURA})
+            Amplitude: <strong>${EFF2_AMPLITUDE}</strong>
+        </div>
+        <div class="col-sm-12">
+          Targets: <strong>${EFF2_TARGET_A_STR}</strong> (${EFF2_TARGET_A}),
+            <strong>${EFF2_TARGET_B_STR}</strong> (${EFF2_TARGET_B})
+            (Chain: <strong>${EFF2_CHAIN}</strong>)
+        </div>
+        <div class="col-sm-12">
+          Radius: <strong>${EFF2_RADIUS} yards</strong> (${EFF2_RADIUS_INDEX})
+        </div>
+        <div class="col-sm-4">
+          MiscA: <strong>${EFF2_MISC_A}</strong>
+        </div>
+        <div class="col-sm-4">
+          MiscB: <strong>${EFF2_MISC_B}</strong>
+        </div>
+        <div class="col-sm-4">
+          Triggers: <strong>${EFF2_TRIGGER}</strong>
+        </div>
+        <div class="col-sm-4">
+          Mechanic: <strong>${EFF2_MECHANIC}</strong>
+        </div>
+      </div>
+
     </div>
   </body>
 </html>

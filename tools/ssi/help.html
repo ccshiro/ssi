@@ -137,9 +137,20 @@ res = [random.choice(res)]
               <td>spell duration in milliseconds</td>
             </tr>
             <tr>
-              <td>icon_path</td>
+              <td>formula</td>
+              <td>spell, effect index</td>
+              <td>returns string representation of base points formula</td>
+            </tr>
+            <tr>
+              <td>power_type</td>
               <td>spell</td>
-              <td>str of icon-path</td>
+              <td>returns one of these strings: 'mana', 'rage', 'focus',
+                'energy', 'happiness', 'health'</td>
+            </tr>
+            <tr>
+              <td>radius</td>
+              <td>spell</td>
+              <td>[eff 0, eff 1, eff 2]</td>
             </tr>
             <tr>
               <td>radius</td>
@@ -150,6 +161,12 @@ res = [random.choice(res)]
               <td>range</td>
               <td>spell</td>
               <td>obj with attr: min and max</td>
+            </tr>
+            <tr>
+              <td>schools</td>
+              <td>spell</td>
+              <td>list with 0 or more of the following strings: 'physical',
+                'holy', 'fire', 'nature', 'frost', 'shadow', 'arcane'</td>
             </tr>
           </tbody>
         </table>

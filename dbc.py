@@ -58,9 +58,10 @@ class Dbc:
         entry = self.type()
         for mapping in self.mappings:
             l = []
-            for _ in range(mapping.count):
-                if mapping.type == str:
-                    index = struct.unpack_from('<I', raw, mapping.index * 4)[0]
+            for i in range(mapping.count):
+                index = i + mapping.index
+                if mapping.type == 'str':
+                    index = struct.unpack_from('<I', raw, index * 4)[0]
                     bstr = []
                     while True:
                         if string_table[index] == 0:
@@ -69,12 +70,16 @@ class Dbc:
                         index += 1
                     # TODO: Are strings actually utf-8 encoded?
                     v = bytes(bstr).decode('utf-8')
-                elif mapping.type == int:
-                    v = struct.unpack_from('<I', raw, mapping.index * 4)[0]
-                elif mapping.type == float:
-                    v = struct.unpack_from('<f', raw, mapping.index * 4)[0]
+                elif mapping.type == 'int':
+                    v = struct.unpack_from('<I', raw, index * 4)[0]
+                elif mapping.type == 'sint':
+                    v = struct.unpack_from('<i', raw, index * 4)[0]
+                elif mapping.type == 'long':
+                    v = struct.unpack_from('<Q', raw, index * 4)[0]
+                elif mapping.type == 'float':
+                    v = struct.unpack_from('<f', raw, index * 4)[0]
                 else:
-                    raise RuntimeError
+                    raise RuntimeError(str(mapping.type) + ' not a valid map type')
                 l.append(v)
             if len(l) <= 1:
                 setattr(entry, mapping.identifier, l[0])
