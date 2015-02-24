@@ -1,5 +1,6 @@
 import dbc
 import os
+import cparser
 import struct
 
 class Spell:
@@ -15,12 +16,13 @@ class Spells:
         spell_range_path = os.path.join(hp, 'SpellRange.dbc')
         spell_radius_path = os.path.join(hp, 'SpellRadius.dbc')
         spell_casttime_path = os.path.join(hp, 'SpellCastTimes.dbc')
+        shared_defs_path = os.path.join(hp, 'SharedDefines.h')
 
         err = RuntimeError('Could not find needed files for version.' +
             '\n\nNeed:\n' +
             spell_path + '\n' + spell_icon_path + '\n' + spell_duration_path +
             '\n' + spell_range_path + '\n' + spell_radius_path + '\n' +
-            spell_casttime_path)
+            spell_casttime_path + '\n' + shared_defs_path)
 
         if not os.path.exists(hp) or not os.path.isdir(hp):
             raise err
@@ -30,7 +32,8 @@ class Spells:
             not os.path.exists(spell_duration_path) or
             not os.path.exists(spell_range_path) or
             not os.path.exists(spell_radius_path) or
-            not os.path.exists(spell_casttime_path)):
+            not os.path.exists(spell_casttime_path) or
+            not os.path.exists(shared_defs_path)):
             raise err
 
         self.spell_dbc = dbc.Dbc(spell_path, self._mapping_for_vers(vers_str),
@@ -45,6 +48,8 @@ class Spells:
             self._radius_mapping(), 'id')
         self.spell_casttime_dbc = dbc.Dbc(spell_casttime_path,
             self._casttime_mapping(), 'id')
+
+        self.parse_shared_defs(shared_defs_path)
 
     def icon_path(self, spell):
         """Returns icon path of spell"""
@@ -127,6 +132,37 @@ class Spells:
 
         return s
 
+    def enum_val(self, enum, id, index = -1):
+        if not hasattr(self, enum) or getattr(self, enum) == None:
+            return '${INVALID_ENUM}'
+        e = getattr(self, enum)
+        if index != -1:
+            e = e[index]
+        for n, i in e.items():
+            if id == i:
+                return n
+        return 'none'
+
+    def enum_mask(self, enum, mask, bit_val = 0, index = -1):
+        """bit_val: 0: use as mask value,
+                    1: use i + 1
+                    2: use i"""
+        if not hasattr(self, enum) or getattr(self, enum) == None:
+            return '${INVALID_ENUM}'
+        s = ''
+        for i in range(0, 64):
+            if mask & (1 << i):
+                if bit_val == 0:
+                    v = self.enum_val(enum, 1 << i, index)
+                elif bit_val == 1:
+                    v = self.enum_val(enum, i + 1, index)
+                else:
+                    v = self.enum_val(enum, i, index)
+                if v == 'none':
+                    v = 'unk'
+                s += ', ' + v if len(s) > 0 else v
+        return s
+
     def iter(self, code):
         """Eval() code for each spell in DBC, returning a list of every spell
            that the code returns True for"""
@@ -172,6 +208,106 @@ class Spells:
     def _casttime_mapping(self):
         return [dbc.Mapping(0, 'int', 'id'), dbc.Mapping(1, 'int', 'cast_time')]
 
+    def prune_enum(self, enums, maps):
+        for m in maps:
+            if m[0] in enums:
+                e = { k.replace(m[1], '').lower() : v for k, v in
+                    enums[m[0]].items() }
+                return e
+        return None
+
+    def parse_shared_defs(self, path):
+        p = cparser.Parser(path, open(path))
+        p.parse()
+        enums = p.get_enums()
+        self.attr0 = self.prune_enum(enums,
+            [('SpellAttributes', 'SPELL_ATTR_'),
+            ('SpellAttr0', 'SPELL_ATTR_')])
+        self.attr1 = self.prune_enum(enums,
+            [('SpellAttributesEx', 'SPELL_ATTR_EX_'),
+            ('SpellAttr1', 'SPELL_ATTR1_')])
+        self.attr2 = self.prune_enum(enums,
+            [('SpellAttributesEx2', 'SPELL_ATTR_EX2_'),
+            ('SpellAttr2', 'SPELL_ATTR2_')])
+        self.attr3 = self.prune_enum(enums,
+            [('SpellAttributesEx3', 'SPELL_ATTR_EX3_'),
+            ('SpellAttr3', 'SPELL_ATTR3_')])
+        self.attr4 = self.prune_enum(enums,
+            [('SpellAttributesEx4', 'SPELL_ATTR_EX4_'),
+            ('SpellAttr4', 'SPELL_ATTR4_')])
+        self.attr5 = self.prune_enum(enums,
+            [('SpellAttributesEx5', 'SPELL_ATTR_EX5_'),
+            ('SpellAttr5', 'SPELL_ATTR5_')])
+        self.attr6 = self.prune_enum(enums,
+            [('SpellAttributesEx6', 'SPELL_ATTR_EX6_'),
+            ('SpellAttr6', 'SPELL_ATTR6_')])
+        self.effects = self.prune_enum(enums,
+            [('SpellEffects', 'SPELL_EFFECT_'),
+            ('SpellEffectName', 'SPELL_EFFECT_')])
+        self.auras = self.prune_enum(enums, [('AuraType', 'SPELL_AURA_')])
+        self.mechanics = self.prune_enum(enums, [('Mechanics', 'MECHANIC_')])
+        self.spell_class = self.prune_enum(enums,
+            [('SpellDmgClass', 'SPELL_DAMAGE_CLASS_')])
+        self.preventions = self.prune_enum(enums,
+            [('SpellPreventionType', 'SPELL_PREVENTION_TYPE_')])
+        self.dispels = self.prune_enum(enums,
+            [('DispelType', 'DISPEL_')])
+        self.targets = self.prune_enum(enums, [('Targets', 'TARGET_')])
+        self.proc_flags = self.prune_enum(enums, [('ProcFlags', 'PROC_FLAG_')])
+        self.families = self.prune_enum(enums,
+            [('SpellFamilyNames', 'SPELLFAMILY_'),
+            ('SpellFamily', 'SPELLFAMILY_')])
+        self.interrupts = self.prune_enum(enums,
+            [('SpellInterruptFlags', 'SPELL_INTERRUPT_FLAG_')])
+        self.channel_interrupts = self.prune_enum(enums,
+            [('SpellChannelInterruptFlags', 'CHANNEL_FLAG_')])
+        self.aura_interrupts = self.prune_enum(enums,
+            [('SpellAuraInterruptFlags', 'AURA_INTERRUPT_FLAG_')])
+        self.target_flags = self.prune_enum(enums,
+            [('SpellCastTargetFlags', 'TARGET_FLAG_')])
+        self.stances = self.prune_enum(enums, [('ShapeshiftForm', 'FORM_')])
+        self.inv_slots = self.prune_enum(enums,
+            [('InventoryType', 'INVTYPE_')])
+        self.item_class = self.prune_enum(enums, [('ItemClass', 'ITEM_CLASS_')])
+
+        # item sub-classes
+        self.sub_class = {
+            0: self.prune_enum(enums,
+                [('ItemSubclassConsumable', 'ITEM_SUBCLASS_')]),
+            1: self.prune_enum(enums,
+                [('ItemSubclassContainer', 'ITEM_SUBCLASS_')]),
+            2: self.prune_enum(enums,
+                [('ItemSubclassWeapon', 'ITEM_SUBCLASS_WEAPON_')]),
+            3: self.prune_enum(enums,
+                [('ItemSubclassGem', 'ITEM_SUBCLASS_GEM_')]),
+            4: self.prune_enum(enums,
+                [('ItemSubclassArmor', 'ITEM_SUBCLASS_ARMOR_')]),
+            5: self.prune_enum(enums,
+                [('ItemSubclassReagent', 'ITEM_SUBCLASS_')]),
+            6: self.prune_enum(enums,
+                [('ItemSubclassProjectile', 'ITEM_SUBCLASS_')]),
+            7: self.prune_enum(enums,
+                [('ItemSubclassTradeGoods', 'ITEM_SUBCLASS_')]),
+            8: self.prune_enum(enums,
+                [('ItemSubclassGeneric', 'ITEM_SUBCLASS_')]),
+            9: self.prune_enum(enums,
+                [('ItemSubclassRecipe', 'ITEM_SUBCLASS_')]),
+            10: self.prune_enum(enums,
+                [('ItemSubclassMoney', 'ITEM_SUBCLASS_')]),
+            11: self.prune_enum(enums,
+                [('ItemSubclassQuiver', 'ITEM_SUBCLASS_')]),
+            12: self.prune_enum(enums,
+                [('ItemSubclassQuest', 'ITEM_SUBCLASS_')]),
+            13: self.prune_enum(enums,
+                [('ItemSubclassKey', 'ITEM_SUBCLASS_')]),
+            14: self.prune_enum(enums,
+                [('ItemSubclassPermanent', 'ITEM_SUBCLASS_')]),
+            15: self.prune_enum(enums,
+                [('ItemSubclassJunk', 'ITEM_SUBCLASS_JUNK_')]),
+            16: self.prune_enum(enums,
+                [('ItemSubclassGlyph', 'ITEM_SUBCLASS_GLYPH_')]),
+            }
+
 def _2_4_3_mappings():
     return [
         dbc.Mapping(0,   'int',   'id'),
@@ -198,9 +334,9 @@ def _2_4_3_mappings():
         dbc.Mapping(35,  'int',   'power_type'),
         dbc.Mapping(36,  'int',   'power'),
         dbc.Mapping(40,  'int',   'range_index'),
-        dbc.Mapping(62,  'sint',  'equipped_class'),
-        dbc.Mapping(63,  'int',   'equipped_submask'),
-        dbc.Mapping(64,  'int',   'equipped_invmask'),
+        dbc.Mapping(62,  'sint',  'item_class'),
+        dbc.Mapping(63,  'int',   'item_subclass'),
+        dbc.Mapping(64,  'int',   'inv_slot'),
         dbc.Mapping(65,  'int',   'effect', count = 3),
         dbc.Mapping(68,  'int',   'die_sides', count = 3),
         dbc.Mapping(71,  'int',   'base_dice', count = 3),
@@ -228,7 +364,7 @@ def _2_4_3_mappings():
         dbc.Mapping(199, 'int',   'spell_family'),
         dbc.Mapping(200, 'long',  'spell_mask'),
         dbc.Mapping(202, 'int',   'max_targets'),
-        dbc.Mapping(203, 'int',   'dmg_class'),
+        dbc.Mapping(203, 'int',   'spell_class'),
         dbc.Mapping(204, 'int',   'prevention'),
         dbc.Mapping(206, 'float', 'dmg_multiplier', count = 3),
         dbc.Mapping(215, 'int',   'school_mask'),

@@ -74,7 +74,7 @@
             ${MAX_LEVEL})
         </div>
         <div class="col-sm-4">
-          Spell School: <strong>${SCHOOL_MASK}</strong> (${SCHOOLS})
+          Spell School: <strong>${SCHOOLS}</strong> (${SCHOOL_MASK})
         </div>
         <div class="col-sm-4">
           Cooldown: <strong>${COOLDOWN}</strong>
@@ -103,19 +103,20 @@
           GCD Category: <strong>${GCD_CATEGORY}</strong>
         </div>
         <div class="col-sm-4">
-          Dispel Type: <strong>${DISPEL_TYPE}</strong>
+          Dispel Type: <strong>${DISPEL_TYPE_STR}</strong> (${DISPEL_TYPE})
         </div>
         <div class="col-sm-4">
-          Damage Class: <strong>${DAMAGE_CLASS}</strong>
+          Class: <strong>${CLASS_STR}</strong> (${CLASS})
         </div>
         <div class="col-sm-4">
-          Prevention Type: <strong>${PREVENTION_TYPE}</strong>
+          Preventable by: <strong>${PREVENTION_TYPE_STR}</strong>
+            (${PREVENTION_TYPE})
         </div>
         <div class="col-sm-4">
-          Mechanic: <strong>${MECHANIC}</strong>
+          Mechanic: <strong>${MECHANIC_STR}</strong> (${MECHANIC})
         </div>
         <div class="col-sm-4">
-          Target Mask: <strong>${TARGET_MASK}</strong>
+          Target Mask: <strong>${TARGET_MASK_STR}</strong> ${TARGET_MASK}
         </div>
         <div class="col-sm-4">
           Max Target Level: <strong>${MAX_TARGET_LEVEL}</strong>
@@ -124,38 +125,44 @@
           Max Target Level: <strong>${MAX_TARGETS}</strong>
         </div>
         <div class="col-sm-4">
-          Spell Family: <strong>${SPELL_FAMILY}</strong>
+          Spell Family: <strong>${SPELL_FAMILY_STR}</strong> (${SPELL_FAMILY})
         </div>
         <div class="col-sm-4">
           Spell Mask: <strong>${SPELL_MASK}</strong>
         </div>
         <div class="col-sm-4">
-          Equipped Class: <strong>${EQUIPPED_ITEM_CLASS}</strong>
+          Equipped Class: <strong>${EQUIPPED_ITEM_CLASS_STR}</strong>
+            ${EQUIPPED_ITEM_CLASS}
         </div>
         <div class="col-sm-4">
-          Equipped Sub-Mask: <strong>${EQUIPPED_ITEM_SUBCLASS}</strong>
+          Equipped Sub-Mask: <strong>${EQUIPPED_ITEM_SUBCLASS_STR}</strong>
+            ${EQUIPPED_ITEM_SUBCLASS}
         </div>
         <div class="col-sm-4">
-          Equipped Inv. Mask: <strong>${EQUIPPED_ITEM_INVMASK}</strong>
+          Equipped Inv. Mask: <strong>${EQUIPPED_ITEM_INVMASK_STR}</strong>
+            ${EQUIPPED_ITEM_INVMASK}
         </div>
         <div class="col-sm-4">
-          Stances: <strong>${STANCES}</strong>
+          Stances: <strong>${STANCES_STR}</strong> ${STANCES}
         </div>
         <div class="col-sm-4">
-          Stances Not: <strong>${STANCES_NOT}</strong>
+          Stances Not: <strong>${STANCES_NOT_STR}</strong> ${STANCES_NOT}
         </div>
         <div class="col-sm-4">
-          Proc: <strong>${PROC_FLAGS}</strong> <strong>${PROC_CHANCE}%</strong>
-            (${PROC_CHARGES} charges)
+          Proc: <strong>${PROC_FLAGS_STR}</strong> ${PROC_FLAGS}
+            <strong>${PROC_CHANCE}%</strong> (${PROC_CHARGES} charges)
         </div>
         <div class="col-sm-4">
-          Cast Interrupt: <strong>${INTERRUPT_FLAGS}</strong>
+          Cast Interrupt: <strong>${INTERRUPT_FLAGS_STR}</strong>
+            ${INTERRUPT_FLAGS}
         </div>
         <div class="col-sm-4">
-          Aura Interrupt: <strong>${AURA_INTERRUPT_FLAGS}</strong>
+          Aura Interrupt: <strong>${AURA_INTERRUPT_FLAGS_STR}</strong>
+            ${AURA_INTERRUPT_FLAGS}
         </div>
         <div class="col-sm-4">
-          Channel Interrupt: <strong>${CHANNEL_INTERRUPT_FLAGS}</strong>
+          Channel Interrupt: <strong>${CHANNEL_INTERRUPT_FLAGS_STR}</strong>
+            ${CHANNEL_INTERRUPT_FLAGS}
         </div>
         <div class="col-sm-8">
           Icon: <strong>${ICON_PATH}</strong> (${ICON_ID})
@@ -256,7 +263,7 @@
           Triggers: <strong>${EFF0_TRIGGER}</strong>
         </div>
         <div class="col-sm-4">
-          Mechanic: <strong>${EFF0_MECHANIC}</strong>
+          Mechanic: <strong>${EFF0_MECHANIC_STR}</strong> (${EFF0_MECHANIC})
         </div>
       </div>
 
@@ -301,7 +308,7 @@
           Triggers: <strong>${EFF1_TRIGGER}</strong>
         </div>
         <div class="col-sm-4">
-          Mechanic: <strong>${EFF1_MECHANIC}</strong>
+          Mechanic: <strong>${EFF1_MECHANIC_STR}</strong> (${EFF1_MECHANIC})
         </div>
       </div>
 
@@ -346,7 +353,7 @@
           Triggers: <strong>${EFF2_TRIGGER}</strong>
         </div>
         <div class="col-sm-4">
-          Mechanic: <strong>${EFF2_MECHANIC}</strong>
+          Mechanic: <strong>${EFF2_MECHANIC_STR}</strong> (${EFF2_MECHANIC})
         </div>
       </div>
 
