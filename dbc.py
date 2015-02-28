@@ -17,12 +17,17 @@ class DbcEntry:
     pass
 
 class Dbc:
-    def __init__(self, filename, mappings, index, type=DbcEntry):
+    def __init__(self, filename, mappings, index, type=DbcEntry,
+        custom_size = False):
         """DBC file is assumed to be little-endian encoded"""
+        """Note: most dbcs have all fields as 4 byte, but not all do. If you set
+        custom_size to true it indicates you know the size is wonky, and you can
+        open and parse one of said DBCs with care"""
         f = open(filename, 'rb')
         self.mappings = mappings
         self.index = index
         self.type = type
+        self.custom_size = custom_size
         try:
             self._parse(f)
         finally:
@@ -37,8 +42,9 @@ class Dbc:
         row_size = struct.unpack('<I', f.read(4))[0]
         string_size = struct.unpack('<I', f.read(4))[0]
 
-        if row_size / 4 != cols:
-            raise RuntimeError
+        if not self.custom_size and row_size / 4 != cols:
+            raise RuntimeError('row_size: ' + str(row_size) + ' cols: ' +
+                str(cols))
 
         # Read table as binary blob
         bin_blob = [None] * rows
