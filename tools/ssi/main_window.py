@@ -13,6 +13,8 @@ class main_window(QtGui.QMainWindow):
         super().__init__(None)
         ui = uic.loadUi('ssi.ui', self)
 
+        self.loader_obj = None
+
         # Results behavior
         self.results.sortByColumn(0, QtCore.Qt.AscendingOrder)
         self.results.horizontalHeader().setStretchLastSection(True)
@@ -209,6 +211,9 @@ class main_window(QtGui.QMainWindow):
         self.tabs.removeTab(index)
 
     def set_vers(self, checked):
+        if self.loader_obj:
+            return
+
         if not checked:
             return
 
@@ -225,16 +230,32 @@ class main_window(QtGui.QMainWindow):
 
         vers = self.sender().objectName()[len('action_vers_'):]
         vers = vers.replace('_', '.')
-        try:
-            self.spells = spell.Spells(vers)
-            self.exec_btn.setEnabled(True)
-            self.set_config_opt('version', vers)
-            self.fill_qs_completer()
-        except RuntimeError as e:
+        self.set_config_opt('version', vers)
+
+        # Spawn worker thread to not block UI (loading and parsing DBC is slow)
+        self.loader_obj = SpellLoader(vers)
+        self.thread = QtCore.QThread()
+        self.loader_obj.moveToThread(self.thread)
+        self.loader_obj.finished.connect(self.thread.quit)
+        self.thread.started.connect(self.loader_obj.work)
+        self.thread.finished.connect(self.on_loaded)
+        self.thread.start()
+        self.setWindowTitle("Shiro's Spell Inspector (Loading DBC...)")
+        
+    def on_loaded(self):
+        if self.loader_obj.err != None:
             self.sender().setChecked(False)
             err = QtGui.QMessageBox(self)
             err.setText(str(e))
             err.exec()
+            self.loader_obj = None
+            return
+
+        self.spells = self.loader_obj.data
+        self.exec_btn.setEnabled(True)
+        self.fill_qs_completer()
+        self.loader_obj = None
+        self.setWindowTitle("Shiro's Spell Inspector")
 
     def set_auto_complete(self, checked):
         if not checked:
@@ -325,3 +346,19 @@ class main_window(QtGui.QMainWindow):
         model.setStringList(list(names))
         c.setModel(model)
         self.quick_search.setCompleter(c)
+
+class SpellLoader(QtCore.QObject):
+    finished = QtCore.pyqtSignal()
+
+    def __init__(self, vers):
+        super().__init__()
+        self.vers = vers
+        self.err = None
+        self.data = None
+
+    def work(self):
+        try:
+            self.data = spell.Spells(self.vers)
+        except RuntimeError as e:
+            self.err = str(e)
+        self.finished.emit()
