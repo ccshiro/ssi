@@ -1,7 +1,7 @@
 from PyQt4 import QtCore, QtGui
 
 class CodeWidget(QtGui.QTextEdit):
-    def __init__(self, parent, completion_type):
+    def __init__(self, parent, completion_type, spells):
         """completion_type: 'full', 'key' or 'none'"""
         super().__init__(parent)
         self.completer = QtGui.QCompleter()
@@ -11,6 +11,7 @@ class CodeWidget(QtGui.QTextEdit):
         self.completer.activated.connect(self.auto_complete)
 
         self.completion_type = completion_type
+        self.spells = spells
 
         model = QtGui.QStringListModel()
         model.setStringList(self.get_toplevel_completers())
@@ -27,6 +28,9 @@ class CodeWidget(QtGui.QTextEdit):
         # Set tab stop to be the length of 4 spaces
         metrics = QtGui.QFontMetrics(font)
         self.setTabStopWidth(4 * metrics.width(' '))
+
+        # Convert rich text to plain text
+        self.setAcceptRichText(False)
 
     def set_completion_type(self, t):
         self.completion_type = t
@@ -79,9 +83,12 @@ class CodeWidget(QtGui.QTextEdit):
         tc.select(QtGui.QTextCursor.WordUnderCursor)
         word = tc.selectedText()
 
-        # Get full context (until previous space)
-        tc.select(QtGui.QTextCursor.LineUnderCursor)
-        context = tc.selectedText()
+        # Get full context (from previous space to cursor)
+        saved = self.textCursor()
+        self.moveCursor(QtGui.QTextCursor.StartOfLine,
+            QtGui.QTextCursor.KeepAnchor)
+        context = self.textCursor().selectedText()
+        self.setTextCursor(saved)
         if len(context) > 0:
             try:
                 context = str.split(context)[-1]
@@ -118,18 +125,58 @@ class CodeWidget(QtGui.QTextEdit):
 
     def update_completion_list(self, context):
         completers = []
-        if '.' not in  context:
-            completers = self.get_toplevel_completers()
-        elif context.split('.')[-2] == 'spell':
-            completers = self.get_spell_completers()
+        try:
+            if '.' not in context:
+                completers = self.get_toplevel_completers()
+            elif context.split('.')[-2] == 'spell':
+                completers = self.get_spell_completers()
+            elif context.split('.')[-2] == 'spells':
+                member_id = context.split('.')[-1]
+                # Enumerations
+                if ']' in member_id:
+                    pass
+                elif '[' in member_id:
+                    member = getattr(self.spells, member_id[:-2]) # [ and ' or "
+                    for key, _ in member.items():
+                        completers.append(key)
+                # Spells member
+                else:
+                    completers = self.get_spells_completers()
+        except (IndexError, AttributeError):
+            return
 
         model = QtGui.QStringListModel()
         model.setStringList(completers)
         self.completer.setModel(model)
 
     def get_toplevel_completers(self):
-        return ['spell']
+        return ['spell', 'spells']
 
     def get_spell_completers(self):
-        s = ['id', 'name', 'rank']
+        s = [ 'id', 'category', 'dispel', 'mechanic', 'attr', 'stances',
+              'stances_not', 'target_mask', 'cast_time_index', 'cooldown',
+              'category_cooldown', 'interrupt_flags', 'aura_interrupt_flags',
+              'channel_interrupt_flags', 'proc_flags', 'proc_chance',
+              'proc_charges', 'max_level', 'base_level', 'level',
+              'duration_index', 'power_type', 'power', 'range_index',
+              'item_class', 'item_subclass', 'inv_slot', 'effect',
+              'die_sides', 'base_dice', 'real_points_per_level',
+              'base_points', 'mechanic_effect', 'target_a', 'target_b',
+              'radius_index', 'aura', 'amplitude', 'multiple_value', 'chain',
+              'misc_a', 'misc_b', 'trigger', 'points_per_cp', 'icon_id',
+              'name', 'rank', 'tooltip', 'gcd_category', 'gcd',
+              'max_target_level', 'spell_family', 'spell_mask', 'max_targets',
+              'spell_class', 'prevention', 'dmg_multiplier', 'school_mask' ]
+        return s
+
+    def get_spells_completers(self):
+              # Methods
+        s = [ 'cast_time', 'duration', 'formula', 'icon_path', 'power_type',
+              'radius', 'range', 'schools',
+              # Attributes
+              'attr0', 'attr1', 'attr2', 'attr3', 'attr4', 'attr5', 'attr6',
+              'auras', 'aura_interrupts', 'channel_interrupts', 'dispels',
+              'effects', 'families', 'interrupts', 'inv_slots', 'item_class',
+              'mechanics', 'preventions', 'proc_flags', 'spell_class',
+              'stances', 'targets' ]
         return s

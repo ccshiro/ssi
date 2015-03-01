@@ -59,13 +59,20 @@
       </p>
 
       <p>
-        <h3>An Example</h3>
-        The following example finds all spells with a duration of 30 minutes.
+        <h3>Some Examples</h3>
+        Find all spells with a duration of 30 minutes.
 
 <pre>
 spells.duration(spell) == 30 * 60 * 1000
 </pre>
 
+        Find all spells that have a SPELL_EFFECT_ENCHANT_ITEM_TEMPORARY.
+
+<pre>
+spells.effects['enchant_item_temporary'] in spell.effect
+# or:
+54 in spell.effect
+</pre>
       </p>
     </div>
 
@@ -142,15 +149,15 @@ res = [random.choice(res)]
               <td>returns string representation of base points formula</td>
             </tr>
             <tr>
+              <td>icon_path</td>
+              <td>icon id</td>
+              <td>returns string of path to icon</td>
+            </tr>
+            <tr>
               <td>power_type</td>
               <td>spell</td>
               <td>returns one of these strings: 'mana', 'rage', 'focus',
                 'energy', 'happiness', 'health'</td>
-            </tr>
-            <tr>
-              <td>radius</td>
-              <td>spell</td>
-              <td>[eff 0, eff 1, eff 2]</td>
             </tr>
             <tr>
               <td>radius</td>
@@ -167,6 +174,98 @@ res = [random.choice(res)]
               <td>spell</td>
               <td>list with 0 or more of the following strings: 'physical',
                 'holy', 'fire', 'nature', 'frost', 'shadow', 'arcane'</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <table class="table table-striped">
+          <caption>Spells' Enumerations</caption>
+          <thead>
+            <tr>
+              <th>Attribute</th>
+              <th>Type</th>
+              <th>Decription</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>attr[0,6]</td>
+              <td>Flag</td>
+              <td><code>spells.attr0[''] & spell.attr[0] != 0</code></td>
+            </tr>
+            <tr>
+              <td>auras</td>
+              <td>Enumeration</td>
+              <td><code>spells.auras[''] in spell.aura</code></td>
+            </tr>
+            <tr>
+              <td>aura_interrupts</td>
+              <td>Flag</td>
+              <td><code>spells.aura_interrupts[''] & spell.aura_interrupt_flags
+                != 0</code></td>
+            </tr>
+            <tr>
+              <td>channel_interrupts</td>
+              <td>Flag</td>
+              <td><code>spells.channel_interrupts[''] &
+                spell.channel_interrupt_flags != 0</code></td>
+            </tr>
+            <tr>
+              <td>dispels</td>
+              <td>Enumeration</td>
+              <td><code>spells.dispels[''] == spell.dispel</code></td>
+            </tr>
+            <tr>
+              <td>families</td>
+              <td>Enumeration</td>
+              <td><code>spells.families[''] == spell.spell_family</code></td>
+            </tr>
+            <tr>
+              <td>interrupts</td>
+              <td>Flag</td>
+              <td><code>spells.interrupts[''] & spell.interrupt_flags != 0</code></td>
+            </tr>
+            <tr>
+              <td>inv_slots</td>
+              <td>Flag</td>
+              <td><code>(1 << spells.inv_slots['']) & spell.inv_slot != 0</code></td>
+            </tr>
+            <tr>
+              <td>item_class</td>
+              <td>Enumeration</td>
+              <td><code>spells.item_class[''] == spell.item_class</code></td>
+            </tr>
+            <tr>
+              <td>mechanics</td>
+              <td>Enumeration</td>
+              <td><code>spells.mechanics[''] == spell.mechanic or
+                spells.mechanics[''] in spell.mechanic_effect</code></td>
+            </tr>
+            <tr>
+              <td>preventions</td>
+              <td>Enumeration</td>
+              <td><code>spells.preventions[''] == spell.prevention</code></td>
+            </tr>
+            <tr>
+              <td>proc_flags</td>
+              <td>Flags</td>
+              <td><code>spells.proc_flags[''] & spell.proc_flags != 0</code></td>
+            </tr>
+            <tr>
+              <td>spell_class</td>
+              <td>Enumeration</td>
+              <td><code>spells.spell_class[''] == spell.spell_class</code></td>
+            </tr>
+            <tr>
+              <td>stances</td>
+              <td>Enumeration</td>
+              <td><code>(1 << (spells.stances[''] - 1)) & spell.stances !=
+                0</code></td>
+            </tr>
+            <tr>
+              <td>targets</td>
+              <td>Enumeration</td>
+              <td><code>spells.targets[''] in spell.target_a + spell.target_b </code></td>
             </tr>
           </tbody>
         </table>

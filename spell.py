@@ -51,33 +51,6 @@ class Spells:
 
         self.parse_shared_defs(shared_defs_path)
 
-    def icon_path(self, spell):
-        """Returns icon path of spell"""
-        return self.spell_icon_dbc.table[spell.icon_id].path
-
-    def duration(self, spell):
-        """Returns duration of spell"""
-        try:
-            return self.spell_duration_dbc.table[spell.duration_index].duration
-        except KeyError:
-            return 0
-
-    def range(self, spell):
-        """Returns range of spell"""
-        return self.spell_range_dbc.table[spell.range_index]
-
-    def _radius(self, spell, i):
-        try:
-            v = self.spell_radius_dbc.table[spell.radius_index[i]].radius
-            return int(v) if v.is_integer() else v
-        except KeyError:
-            return 0
-
-    def radius(self, spell):
-        """Returns list of radii of spell effects"""
-        return [self._radius(spell, 0), self._radius(spell, 1),
-                self._radius(spell, 2)]
-
     def cast_time(self, spell):
         """Returns cast time of spell"""
         try:
@@ -86,22 +59,12 @@ class Spells:
         except KeyError:
             return 0
 
-    def schools(self, spell):
-        """Returns list of school strings"""
-        l = ['physical', 'holy', 'fire', 'nature', 'frost', 'shadow', 'arcane']
-        mask = self.spell_dbc.table[spell.id].school_mask
-        res = []
-        for i in range(0, 7):
-            if mask & (1 << i):
-                res.append(l[i])
-        return res
-    
-    def power_type(self, spell):
-        """Returns string representation of power type"""
-        if spell.power_type == 0xFFFFFFFE:
-            return 'health'
-        return [
-            'mana', 'rage', 'focus', 'energy', 'happiness'][spell.power_type]
+    def duration(self, spell):
+        """Returns duration of spell"""
+        try:
+            return self.spell_duration_dbc.table[spell.duration_index].duration
+        except KeyError:
+            return 0
 
     def formula(self, spell, eff):
         """Returns string representation of base points formula"""
@@ -131,6 +94,43 @@ class Spells:
                 s += ' + %.2f' % per_cp + ' * ComboPoints'
 
         return s
+
+    def icon_path(self, spell):
+        """Returns icon path of spell"""
+        return self.spell_icon_dbc.table[spell.icon_id].path
+    
+    def power_type(self, spell):
+        """Returns string representation of power type"""
+        if spell.power_type == 0xFFFFFFFE:
+            return 'health'
+        return [
+            'mana', 'rage', 'focus', 'energy', 'happiness'][spell.power_type]
+
+    def range(self, spell):
+        """Returns range of spell"""
+        return self.spell_range_dbc.table[spell.range_index]
+
+    def _radius(self, spell, i):
+        try:
+            v = self.spell_radius_dbc.table[spell.radius_index[i]].radius
+            return int(v) if v.is_integer() else v
+        except KeyError:
+            return 0
+        
+    def radius(self, spell):
+        """Returns list of radii of spell effects"""
+        return [self._radius(spell, 0), self._radius(spell, 1),
+                self._radius(spell, 2)]
+
+    def schools(self, spell):
+        """Returns list of school strings"""
+        l = ['physical', 'holy', 'fire', 'nature', 'frost', 'shadow', 'arcane']
+        mask = self.spell_dbc.table[spell.id].school_mask
+        res = []
+        for i in range(0, 7):
+            if mask & (1 << i):
+                res.append(l[i])
+        return res
 
     def enum_val(self, enum, id, index = -1):
         if not hasattr(self, enum) or getattr(self, enum) == None:

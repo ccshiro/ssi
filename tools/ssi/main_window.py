@@ -199,7 +199,8 @@ class main_window(QtGui.QMainWindow):
             self.results_updated()
 
     def code_btn_clicked(self):
-        widget = code_widget.CodeWidget(self.tabs, self.auto_complete)
+        widget = code_widget.CodeWidget(self.tabs, self.auto_complete,
+            self.spells)
         self.tabs.insertTab(0, widget, 'Code')
         self.tabs.setCurrentIndex(0)
         self.code_btn.setEnabled(False)
