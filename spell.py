@@ -9,7 +9,8 @@ class Spell:
 
 class Spells:
     def __init__(self, vers_str):
-        hp = os.path.expanduser('~/.ssi/' + vers_str)
+        hp = os.path.join(os.path.expanduser('~'), os.path.join('.ssi',
+            vers_str))
         spell_path = os.path.join(hp, 'Spell.dbc')
         spell_icon_path = os.path.join(hp, 'SpellIcon.dbc')
         spell_duration_path = os.path.join(hp, 'SpellDuration.dbc')

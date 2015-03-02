@@ -295,8 +295,11 @@ class main_window(QtGui.QMainWindow):
         widget = QtWebKit.QWebView()
         url = QtCore.QUrl.fromLocalFile(os.path.abspath('help.html'))
         widget.setUrl(url)
+        csspath = os.path.join('..', os.path.join('..',
+            os.path.join('bootstrap', os.path.join('css'),
+            os.path.join('bootstrap.min.css'))))
         widget.settings().setUserStyleSheetUrl(QtCore.QUrl.fromLocalFile(
-            os.path.abspath('../../bootstrap/css/bootstrap.min.css')))
+            os.path.abspath(csspath)))
         self.tabs.setCurrentIndex(self.tabs.addTab(widget, 'Help'))
 
     def exit_program(self):
