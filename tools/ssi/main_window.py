@@ -293,13 +293,18 @@ class main_window(QtGui.QMainWindow):
 
     def show_help(self):
         widget = QtWebKit.QWebView()
-        url = QtCore.QUrl.fromLocalFile(os.path.abspath('help.html'))
-        widget.setUrl(url)
         csspath = os.path.join('..', os.path.join('..',
             os.path.join('bootstrap', os.path.join('css'),
             os.path.join('bootstrap.min.css'))))
-        widget.settings().setUserStyleSheetUrl(QtCore.QUrl.fromLocalFile(
-            os.path.abspath(csspath)))
+        css_url = QtCore.QUrl.fromLocalFile(os.path.abspath(csspath))
+        html = ''
+        page = open('help.html')
+        for line in page.readlines():
+            line = line.replace('${BOOTSTRAP_CSS}', css_url.toString())
+            html += line
+        page.close()
+        widget.setHtml(html)
+        widget.settings().setUserStyleSheetUrl(css_url)
         self.tabs.setCurrentIndex(self.tabs.addTab(widget, 'Help'))
 
     def exit_program(self):

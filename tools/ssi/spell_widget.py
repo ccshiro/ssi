@@ -16,16 +16,17 @@ class SpellWidget(QtWebKit.QWebView):
         self.spell = spell
         self.icons = icons
         self.spells = spells
-        self.load_html() 
-        self.setHtml(self.html)
+        
         # Note: The documentation says that external css should be located
         #       relative to baseUrl, but even when it is, it's not loaded. Not
         #       sure why not. We get around that like this.
         csspath = os.path.join('..', os.path.join('..',
             os.path.join('bootstrap', os.path.join('css'),
             os.path.join('bootstrap.min.css'))))
-        self.settings().setUserStyleSheetUrl(QtCore.QUrl.fromLocalFile(
-            os.path.abspath(csspath)))
+        self.css_url = QtCore.QUrl.fromLocalFile(os.path.abspath(csspath))
+        self.load_html() 
+        self.setHtml(self.html)
+        self.settings().setUserStyleSheetUrl(self.css_url)
 
     def preferred_title(self):
         return str(self.spell.id)
@@ -37,6 +38,7 @@ class SpellWidget(QtWebKit.QWebView):
         for line in page.readlines():
             self.html += line
         self.expand_placeholders()
+        page.close()
 
     def _replace(self, dic):
         for i, j in dic.items():
@@ -79,6 +81,8 @@ class SpellWidget(QtWebKit.QWebView):
                 urllib.request.pathname2url(os.path.abspath('no_icon.png')))
 
         self._replace({
+            # CSS
+            '${BOOTSTRAP_CSS}': self.css_url.toString(),
             # Spell
             '${NAME}': self.spell.name,
             '${ID}': self.spell.id,
