@@ -50,8 +50,15 @@ class CodeWidget(QtGui.QTextEdit):
                 e.ignore()
                 return
 
+        # See if ^space was invoked
+        forced = False
+        if (e.modifiers() & QtCore.Qt.ControlModifier and
+            e.key() == QtCore.Qt.Key_Space):
+            forced = True
+
         # Relay key press to QTextEdit
-        super().keyPressEvent(e)
+        if not forced:
+            super().keyPressEvent(e)
 
         # Insert indentation if necessary when enter is pressed
         if e.key() == QtCore.Qt.Key_Enter or e.key() == QtCore.Qt.Key_Return:
@@ -95,12 +102,6 @@ class CodeWidget(QtGui.QTextEdit):
                 self.update_completion_list(context)
             except IndexError:
                 return
-
-        # See if ^space was invoked
-        forced = False
-        if (e.modifiers() & QtCore.Qt.ControlModifier and
-            e.key() == QtCore.Qt.Key_Space):
-            forced = True
 
         if self.completion_type == 'key' and not forced:
             return
