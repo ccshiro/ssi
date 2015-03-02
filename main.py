@@ -38,7 +38,7 @@ def launch_tool(tool):
         sys.stderr.write('Tool has no main.py\n')
         sys.exit(1)
     path = os.path.abspath(module)
-    subprocess.call(path, cwd=os.path.dirname(path))
+    subprocess.call(path, cwd=os.path.dirname(path), shell=True)
 
 if __name__ == '__main__':
     main()
