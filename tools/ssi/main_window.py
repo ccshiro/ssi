@@ -303,6 +303,7 @@ class main_window(QtGui.QMainWindow):
 
     def parse_config(self):
         config = configparser.ConfigParser()
+        dir_path = os.path.expanduser('~/.ssi/')
         path = os.path.expanduser('~/.ssi/.ssirc')
         if os.path.exists(path):
             try:
@@ -313,6 +314,8 @@ class main_window(QtGui.QMainWindow):
                     'auto_complete': config['SSI']['auto_complete']}
             except:
                 pass # Write a new config if current is invalid
+
+        os.makedirs(dir_path, exist_ok = True)
 
         config['SSI'] = {'version': 'None',
                          'wowheadicons': True,
