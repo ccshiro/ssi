@@ -245,9 +245,10 @@ class main_window(QtGui.QMainWindow):
         
     def on_loaded(self):
         if self.loader_obj.err != None:
-            self.sender().setChecked(False)
+            for box in self.version_boxes:
+                box.setChecked(False)
             err = QtGui.QMessageBox(self)
-            err.setText(str(e))
+            err.setText(str(self.loader_obj.err))
             err.exec()
             self.loader_obj = None
             return
