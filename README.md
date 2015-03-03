@@ -6,6 +6,8 @@ but with different goals. It is written in Python. This is only my second time
 using Python for a project, so keep that in mind when haiting on the code
 quality... or lack thereof.
 
+The code is licensed under the GNU GENERAL PUBLIC LICENSE Version 3.
+
 # Features
 
 Features of the program:
