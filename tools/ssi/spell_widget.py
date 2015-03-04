@@ -207,6 +207,8 @@ class SpellWidget(QtWebKit.QWebView):
             '${ATTR5_STR}': self.attr_str(5),
             '${ATTR6}': self.attr(6),
             '${ATTR6_STR}': self.attr_str(6),
+            '${ATTR7}': self.attr(7),
+            '${ATTR7_STR}': self.attr_str(7),
             # Effect 0
             '${EFF0_EFFECT}': self.spell.effect[0],
             '${EFF0_EFFECT_STR}': self.spells.enum_val('effects',

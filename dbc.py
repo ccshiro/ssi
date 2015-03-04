@@ -104,7 +104,7 @@ class Dbc:
                 else:
                     raise RuntimeError(str(mapping.type) + ' not a valid map type')
                 if mapping.post_process != None:
-                    v = mapping.post_process(v)
+                    v = mapping.post_process(v, entry)
                 l.append(v)
             if len(l) <= 1:
                 setattr(entry, mapping.identifier, l[0])

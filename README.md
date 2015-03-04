@@ -193,4 +193,17 @@ probably missing and where to find them:
 
 ## TrinityCore
 
-TODO
+| Enum                     | File                 |
+|-----------------         |----------------------|
+|AuraType                  |SpellAuraDefines.h    |
+|ShapeshiftForm            |Unit.h                |
+|SpellInterruptFlags       |Unit.h                |
+|SpellChannelInterruptFlags|Unit.h                |
+|SpellAuraInterruptFlags   |Unit.h                |
+|SpellCastTargetFlags      |SpellInfo.h           |
+|InventoryType             |ItemPrototype.h       |
+|ItemClass                 |ItemPrototype.h       |
+|ItemSubclass*             |ItemPrototype.h       |
+|ProcFlags                 |SpellMgr.h            |
+
+\* All 16 of them.

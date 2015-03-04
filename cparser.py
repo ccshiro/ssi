@@ -262,13 +262,15 @@ class Parser:
             if t != Token.identifier:
                 self.expected([Token.identifier], t)
             id = self.lexer.id
+            if not isinstance(id, str):
+                print(id)
             if id in self.enums[enum_id].values():
                 self.lexer.err("enum identifier '" + id + "' already used")
             t = self.lexer.get_token()
 
             # Comma or } => implicit value
             if t == Token.rbracer or t == Token.comma:
-                self.enums[enum_id][next_implicit_val] = id
+                self.enums[enum_id][id] = next_implicit_val
                 next_implicit_val += 1
             # Assign op (specified value)
             else:

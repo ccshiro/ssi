@@ -87,7 +87,8 @@ class Spells:
         """Returns string representation of base points formula"""
         # XXX: spell attr calc level
 
-        base = spell.base_points[eff] + spell.base_dice[eff]
+        base = spell.base_points[eff] + spell.base_dice[eff] if hasattr(spell,
+            'base_dice') else 0
         rng = spell.die_sides[eff]
         real_per_level = spell.real_points_per_level[eff]
         per_cp = spell.points_per_cp[eff]
@@ -155,6 +156,8 @@ class Spells:
         e = getattr(self, enum)
         if index != -1:
             e = e[index]
+            if e == None:
+                return '${INVALID_ENUM}'
         for n, i in e.items():
             if id == i:
                 return n
@@ -202,8 +205,10 @@ class Spells:
     def _mapping_for_vers(self, vers_str):
         if vers_str == '1.12.1':
             return _1_12_1_mappings()
-        if vers_str == '2.4.3':
+        elif vers_str == '2.4.3':
             return _2_4_3_mappings()
+        elif vers_str == '3.3.5':
+            return _3_3_5_mappings()
         else:
             raise RuntimeError('Unsupported version "' + vers_str + '.')
 
@@ -260,6 +265,9 @@ class Spells:
         self.attr6 = self.prune_enum(enums,
             [('SpellAttributesEx6', 'SPELL_ATTR_EX6_'),
             ('SpellAttr6', 'SPELL_ATTR6_')])
+        self.attr7 = self.prune_enum(enums,
+            [('SpellAttributesEx7', 'SPELL_ATTR_EX7_'),
+            ('SpellAttr7', 'SPELL_ATTR7_')])
         self.effects = self.prune_enum(enums,
             [('SpellEffects', 'SPELL_EFFECT_'),
             ('SpellEffectName', 'SPELL_EFFECT_')])
@@ -331,7 +339,7 @@ def _1_12_1_mappings():
     return [
         dbc.Mapping(0,   'int',   'id'),
         dbc.Mapping(1,   'int',   'school_mask',
-            post_process = lambda x: (1 << x)),
+            post_process = lambda x, _: (1 << x)),
         dbc.Mapping(2,   'int',   'category'),
         dbc.Mapping(4,   'int',   'dispel'),
         dbc.Mapping(5,   'int',   'mechanic'),
@@ -357,7 +365,7 @@ def _1_12_1_mappings():
         dbc.Mapping(36,  'int',   'range_index'),
         dbc.Mapping(58,  'sint',  'item_class'),
         dbc.Mapping(59,  'int',   'item_subclass', post_process =
-            lambda x: 0 if x == 0xFFFFFFFF else x),
+            lambda x, _: 0 if x == 0xFFFFFFFF else x),
         dbc.Mapping(60,  'int',   'inv_slot'),
         dbc.Mapping(61,  'int',   'effect', count = 3),
         dbc.Mapping(64,  'int',   'die_sides', count = 3),
@@ -450,4 +458,71 @@ def _2_4_3_mappings():
         dbc.Mapping(204, 'int',   'prevention'),
         dbc.Mapping(206, 'float', 'dmg_multiplier', count = 3),
         dbc.Mapping(215, 'int',   'school_mask'),
+    ]
+
+def flag12bytes(val, spell):
+    return (val << 64) | (spell._spell_mask1 << 32) | spell._spell_mask0 
+
+def _3_3_5_mappings():
+    return [
+        dbc.Mapping(0,   'int',   'id'),
+        dbc.Mapping(1,   'int',   'category'),
+        dbc.Mapping(2,   'int',   'dispel'),
+        dbc.Mapping(3,   'int',   'mechanic'),
+        dbc.Mapping(4,   'int',   'attr', count = 8),
+        dbc.Mapping(12,  'int',   'stances'),
+        dbc.Mapping(14,  'int',   'stances_not'),
+        dbc.Mapping(16,  'int',   'target_mask'),
+        dbc.Mapping(28,  'int',   'cast_time_index'),
+        dbc.Mapping(29,  'int',   'cooldown'),
+        dbc.Mapping(30,  'int',   'category_cooldown'),
+        dbc.Mapping(31,  'int',   'interrupt_flags'),
+        dbc.Mapping(32,  'int',   'aura_interrupt_flags'),
+        dbc.Mapping(33,  'int',   'channel_interrupt_flags'),
+        dbc.Mapping(34,  'int',   'proc_flags'),
+        dbc.Mapping(35,  'int',   'proc_chance'),
+        dbc.Mapping(36,  'int',   'proc_charges'),
+        dbc.Mapping(37,  'int',   'max_level'),
+        dbc.Mapping(38,  'int',   'base_level'),
+        dbc.Mapping(39,  'int',   'level'),
+        dbc.Mapping(40,  'int',   'duration_index'),
+        dbc.Mapping(41,  'int',   'power_type'),
+        dbc.Mapping(42,  'int',   'power'),
+        dbc.Mapping(46,  'int',   'range_index'),
+        dbc.Mapping(68,  'sint',  'item_class'),
+        dbc.Mapping(69,  'int',   'item_subclass'),
+        dbc.Mapping(70,  'int',   'inv_slot'),
+        dbc.Mapping(71,  'int',   'effect', count = 3),
+        dbc.Mapping(74,  'int',   'die_sides', count = 3),
+        #dbc.Mapping(71,  'int',   'base_dice', count = 3),
+        dbc.Mapping(77,  'float', 'real_points_per_level', count = 3),
+        dbc.Mapping(80,  'sint',  'base_points', count = 3),
+        dbc.Mapping(83,  'sint',  'mechanic_effect', count = 3),
+        dbc.Mapping(86,  'int',   'target_a', count = 3),
+        dbc.Mapping(89,  'int',   'target_b', count = 3),
+        dbc.Mapping(92,  'int',   'radius_index', count = 3),
+        dbc.Mapping(95,  'int',   'aura', count = 3),
+        dbc.Mapping(98,  'int',   'amplitude', count = 3),
+        dbc.Mapping(101, 'float', 'multiple_value', count = 3),
+        dbc.Mapping(104, 'int',   'chain', count = 3),
+        dbc.Mapping(110, 'int',   'misc_a', count = 3),
+        dbc.Mapping(113, 'int',   'misc_b', count = 3),
+        dbc.Mapping(116, 'int',   'trigger', count = 3),
+        dbc.Mapping(119, 'float', 'points_per_cp', count = 3),
+        dbc.Mapping(133, 'int',   'icon_id'),
+        dbc.Mapping(136, 'str',   'name'),
+        dbc.Mapping(153, 'str',   'rank'),
+        dbc.Mapping(187, 'str',   'tooltip'),
+        dbc.Mapping(205, 'int',   'gcd_category'),
+        dbc.Mapping(206, 'int',   'gcd'),
+        dbc.Mapping(207, 'int',   'max_target_level'),
+        dbc.Mapping(208, 'int',   'spell_family'),
+        dbc.Mapping(200, 'int',   '_spell_mask0'),
+        dbc.Mapping(201, 'int',   '_spell_mask1'),
+        dbc.Mapping(202, 'int',   'spell_mask', post_process = flag12bytes),
+        dbc.Mapping(212, 'int',   'max_targets'),
+        dbc.Mapping(213, 'int',   'spell_class'),
+        dbc.Mapping(214, 'int',   'prevention'),
+        dbc.Mapping(216, 'float', 'dmg_multiplier', count = 3),
+        dbc.Mapping(225, 'int',   'school_mask'),
     ]
