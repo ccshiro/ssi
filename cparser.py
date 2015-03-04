@@ -28,15 +28,15 @@ class Token:
     identifier = 2
     integer = 3
     semicolon = 4
-    comma = 5
-    lbracer = 6
-    rbracer = 7
-    assign_op = 8
-    enum_keyword = 9
+    colon = 5
+    comma = 6
+    lbracer = 7
+    rbracer = 8
+    assign_op = 9
+    enum_keyword = 10
+    class_keyword = 11
 
     def get_str(t):
-        if isinstance(t, tuple):
-            t = t[0]
         if t == Token.unrecognized:
             return "unrecognized"
         elif t == Token.eof:
@@ -47,6 +47,8 @@ class Token:
             return "integer"
         elif t == Token.semicolon:
             return "semicolon"
+        elif t == Token.colon:
+            return "colon"
         elif t == Token.comma:
             return "comma"
         elif t == Token.lbracer:
@@ -57,6 +59,8 @@ class Token:
             return "assign_op"
         elif t == Token.enum_keyword:
             return "enum_keyword"
+        elif t == Token.class_keyword:
+            return "class_keyword"
         raise ParseError('Not a valid token id (' + str(t) + ')')
 
 class Lexer:
@@ -162,9 +166,11 @@ class Lexer:
                             else 16)
                         return Token.integer
                     intstr += self.getch()
-            # Semicolon, comma
+            # Semicolon, colon, comma
             if c == ";":
                 return Token.semicolon
+            if c == ":":
+                return Token.colon
             if c == ",":
                 return Token.comma
             # Bracers
@@ -181,8 +187,10 @@ class Lexer:
             return Token.unrecognized
 
     def as_keyword(self, id):
-        if id == "enum":
+        if id == 'enum':
             return Token.enum_keyword
+        elif id == 'class':
+            return Token.class_keyword
         return Token.unrecognized
 
 class Parser:
@@ -219,19 +227,31 @@ class Parser:
             t = self.lexer.get_token()
 
     def parse_enum(self):
-        # enum <identifier>
         t = self.lexer.get_token()
+
+        # Optional: Scoped enum (enum class)
+        if t == Token.class_keyword:
+            t = self.lexer.get_token()
+
+        # enum <identifier>
         if t != Token.identifier:
             self.expected([Token.identifier], t)
         enum_id = self.lexer.id
         self.enums[enum_id] = {}
 
-        # { or ;
         t = self.lexer.get_token()
+
+        # Optional type ( : type)
+        if t == Token.colon:
+            # Read and discard tokens until { or ;
+            while t != Token.lbracer and t != Token.semicolon:
+                t = self.lexer.get_token()
+
+        # { or ;
         if t == Token.semicolon:
             return
         if t != Token.lbracer:
-            self.expected([Token.lbracer], t)
+            self.expected([Token.lbracer, Token.semicolon, Token.colon], t)
 
         # Read enum values
         next_implicit_val = 0
