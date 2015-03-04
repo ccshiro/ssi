@@ -3,10 +3,13 @@
 SSI is a free-software tool intended to view spell information of the World of
 Warcraft game. It is of similar purpose as the now discontinued Qt Spellworks,
 but with different goals. It is written in Python. This is only my second time
-using Python for a project, so keep that in mind when haiting on the code
+using Python for a project, so keep that in mind when hating on the code
 quality... or lack thereof.
 
 The code is licensed under the GNU GENERAL PUBLIC LICENSE Version 3.
+
+NOTE: The program is pretty annoying to setup the first time at the moment. I
+intend to fix that in a future patch, but please bear with it for now. Thanks!
 
 # Features
 
@@ -25,6 +28,7 @@ Features of the program:
 
 Stuff I want to do but haven't yet:
 
+- Make the program easier to setup. Such as with an install script.
 - Add more data about inspected spells. Such as relations to other spells and
   effect/aura specific understanding of misc values. And more.
 - Add more versions.
@@ -59,7 +63,7 @@ Download and install the following:
 #### Python3
 
 https://www.python.org/downloads/
-Chose a version and click download, get the MSI installer appropriate for your
+Choose a version and click download, get the MSI installer appropriate for your
 architecture. In the customize Python part make sure you enable 'Add python.exe
 to Path'.
 
@@ -74,6 +78,7 @@ time of writing you might want: 'PyQt4-4.11.3-gpl-Py3.4-Qt4.8.6-x64.exe'.
 To run the program you can double click main.py in the root folder of the
 project, or you can open a cmd.exe (or git bash) and type:
 
+    cd C:\Users\<UserName>\ssi
     python main.py
 
 The program now needs to be set up for the version you want to use. If you go to
@@ -81,7 +86,7 @@ File, Version Menu and select a version number the program will print what files
 are missing for that version. You need to resolve those missing files. To do so,
 I recommend you either copy all of those files into the given path, or even
 better symlink the .dbc files and copy the SharedDefines.h. To symlink the DBCs
-run the following (replace what's inside <>):
+run the following in a cmd.exe instance (replace what's inside <>):
 
     cd C:\Users\<UserName>\.ssi
     mkdir "<vers>" && cd "<vers>"
@@ -121,6 +126,7 @@ And then as your user:
 
 In your terminal type:
 
+    cd ~/ssi
     ./main.py
 
 The program now needs to be set up for the version you want to use. If you go to
@@ -142,6 +148,13 @@ All of the following can be copied and run at once:
     ln -s "${dbcs}/SpellRange.dbc" SpellRange.dbc && \
     ln -s "${dbcs}/SpellRadius.dbc" SpellRadius.dbc && \
     ln -s "${dbcs}/SpellCastTimes.dbc" SpellCastTimes.dbc 
+
+Then manually copy ShareDefines.h from MaNGOS or TrinityCore to the same
+directory.
+
+You can now use the program's functionality, however to get exposed to all the
+functionality a last, optional, step is required. Please go to the the
+'Resolving enums' section in this README for further instructions.
 
 ## OSX
 
@@ -171,7 +184,7 @@ probably missing and where to find them:
 |SpellChannelInterruptFlags|Unit.h                |
 |SpellAuraInterruptFlags   |Unit.h                |
 |SpellCastTargetFlags      |DBCEnums.h            |
-|InventoryTypef            |ItemPrototype.h       |
+|InventoryType             |ItemPrototype.h       |
 |ItemClass                 |ItemPrototype.h       |
 |ItemSubclass*             |ItemPrototype.h       |
 |ProcFlags                 |SpellMgr.h            |
