@@ -62,7 +62,7 @@ class main_window(QtGui.QMainWindow):
         # Config
         # Version
         opts = self.parse_config()
-        if opts['version'] == '1.12.12':
+        if opts['version'] == '1.12.1':
             self.action_vers_1_12_1.setChecked(True)
         elif opts['version'] == '2.4.3':
             self.action_vers_2_4_3.setChecked(True)

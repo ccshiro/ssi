@@ -17,7 +17,7 @@
 import struct
 
 class Mapping:
-    def __init__(self, index, type, id, count = 1):
+    def __init__(self, index, type, id, count = 1, post_process = None):
         """
             index: index in DBC
             type:  python type to cast bytes to
@@ -28,6 +28,7 @@ class Mapping:
         self.type = type
         self.identifier = id
         self.count = count
+        self.post_process = post_process
 
 class DbcEntry:
     pass
@@ -102,6 +103,8 @@ class Dbc:
                     v = struct.unpack_from('<f', raw, index * 4)[0]
                 else:
                     raise RuntimeError(str(mapping.type) + ' not a valid map type')
+                if mapping.post_process != None:
+                    v = mapping.post_process(v)
                 l.append(v)
             if len(l) <= 1:
                 setattr(entry, mapping.identifier, l[0])

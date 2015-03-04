@@ -85,6 +85,16 @@ class SpellWidget(QtWebKit.QWebView):
             out += str(secs) + (" second" if secs == 1 else " seconds")
         return out
 
+    def attr(self, i):
+        if len(self.spell.attr) > i:
+            return hex(self.spell.attr[i])
+        return 'N/A'
+
+    def attr_str(self, i):
+        if len(self.spell.attr) > i:
+            return self.spells.enum_mask('attr' + str(i), self.spell.attr[i])
+        return 'N/A'
+
     def expand_placeholders(self):
         """Parses HTML, replacing placeholders"""
         icon_path = ''
@@ -183,20 +193,20 @@ class SpellWidget(QtWebKit.QWebView):
                 'channel_interrupts', self.spell.channel_interrupt_flags),
             '${ICON_ID}': self.spell.icon_id,
             '${ICON_PATH}': self.spells.icon_path(self.spell),
-            '${ATTR0}': hex(self.spell.attr[0]),
-            '${ATTR0_STR}': self.spells.enum_mask('attr0', self.spell.attr[0]),
-            '${ATTR1}': hex(self.spell.attr[1]),
-            '${ATTR1_STR}': self.spells.enum_mask('attr1', self.spell.attr[1]),
-            '${ATTR2}': hex(self.spell.attr[2]),
-            '${ATTR2_STR}': self.spells.enum_mask('attr2', self.spell.attr[2]),
-            '${ATTR3}': hex(self.spell.attr[3]),
-            '${ATTR3_STR}': self.spells.enum_mask('attr3', self.spell.attr[3]),
-            '${ATTR4}': hex(self.spell.attr[4]),
-            '${ATTR4_STR}': self.spells.enum_mask('attr4', self.spell.attr[4]),
-            '${ATTR5}': hex(self.spell.attr[5]),
-            '${ATTR5_STR}': self.spells.enum_mask('attr5', self.spell.attr[5]),
-            '${ATTR6}': hex(self.spell.attr[6]),
-            '${ATTR6_STR}': self.spells.enum_mask('attr6', self.spell.attr[6]),
+            '${ATTR0}': self.attr(0),
+            '${ATTR0_STR}': self.attr_str(0),
+            '${ATTR1}': self.attr(1),
+            '${ATTR1_STR}': self.attr_str(1),
+            '${ATTR2}': self.attr(2),
+            '${ATTR2_STR}': self.attr_str(2),
+            '${ATTR3}': self.attr(3),
+            '${ATTR3_STR}': self.attr_str(3),
+            '${ATTR4}': self.attr(4),
+            '${ATTR4_STR}': self.attr_str(4),
+            '${ATTR5}': self.attr(5),
+            '${ATTR5_STR}': self.attr_str(5),
+            '${ATTR6}': self.attr(6),
+            '${ATTR6_STR}': self.attr_str(6),
             # Effect 0
             '${EFF0_EFFECT}': self.spell.effect[0],
             '${EFF0_EFFECT_STR}': self.spells.enum_val('effects',
@@ -218,7 +228,8 @@ class SpellWidget(QtWebKit.QWebView):
             '${EFF0_RADIUS_INDEX}': self.spell.radius_index[0],
             '${EFF0_CHAIN}': self.spell.chain[0],
             '${EFF0_MISC_A}': self.spell.misc_a[0],
-            '${EFF0_MISC_B}': self.spell.misc_b[0],
+            '${EFF0_MISC_B}': self.spell.misc_b[0] if hasattr(self.spell,
+                'misc_b') else 'N/A',
             '${EFF0_TRIGGER}': self.spell.trigger[0],
             '${EFF0_MECHANIC}': self.spell.mechanic_effect[0],
             '${EFF0_MECHANIC_STR}': self.spells.enum_val('mechanics',
@@ -244,7 +255,8 @@ class SpellWidget(QtWebKit.QWebView):
             '${EFF1_RADIUS_INDEX}': self.spell.radius_index[1],
             '${EFF1_CHAIN}': self.spell.chain[1],
             '${EFF1_MISC_A}': self.spell.misc_a[1],
-            '${EFF1_MISC_B}': self.spell.misc_b[1],
+            '${EFF1_MISC_B}': self.spell.misc_b[1] if hasattr(self.spell,
+                'misc_b') else 'N/A',
             '${EFF1_TRIGGER}': self.spell.trigger[1],
             '${EFF1_MECHANIC}': self.spell.mechanic_effect[1],
             '${EFF1_MECHANIC_STR}': self.spells.enum_val('mechanics',
@@ -270,7 +282,8 @@ class SpellWidget(QtWebKit.QWebView):
             '${EFF2_RADIUS_INDEX}': self.spell.radius_index[2],
             '${EFF2_CHAIN}': self.spell.chain[2],
             '${EFF2_MISC_A}': self.spell.misc_a[2],
-            '${EFF2_MISC_B}': self.spell.misc_b[2],
+            '${EFF2_MISC_B}': self.spell.misc_b[2] if hasattr(self.spell,
+                'misc_b') else 'N/A',
             '${EFF2_TRIGGER}': self.spell.trigger[2],
             '${EFF2_MECHANIC}': self.spell.mechanic_effect[2],
             '${EFF2_MECHANIC_STR}': self.spells.enum_val('mechanics',
