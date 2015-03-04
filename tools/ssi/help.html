@@ -99,7 +99,7 @@ spells.effects['enchant_item_temporary'] in spell.effect
       </p>
 
       <p>
-        <h3>An Example</h3>
+        <h3>Some Examples</h3>
         The following example finds a single random spell with 35 yards range.
 
 <pre>
@@ -110,6 +110,29 @@ for _, spell in dict.items():
     if spells.range(spell).max == 35:
         res.append(spell)
 res = [random.choice(res)]
+</pre>
+
+You can even do crazy stuff like writing the result set to a file. The below
+code filters out all spells that have a persistent area aura, are not spell
+family 'generic' and have the actual aura type of the PAA be a dummy one. It
+then goes ahead and logs it to a file!
+
+<pre>
+res = []
+
+paa = spells.effects['persistent_area_aura']
+dmy = spells.auras['dummy']
+
+f = open('/tmp/out.txt', 'w')
+
+for _, spell in dict.items():
+    if paa in spell.effect and spell.spell_family > 0 and spell.aura[spell.effect.index(paa)] == dmy:
+        # Show spell in result list
+        res.append(spell)
+        # Write to /tmp/out.txt
+        f.write(str(spell.id) + ', ')
+
+f.close()
 </pre>
 
       </p>
