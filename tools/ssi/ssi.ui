@@ -127,7 +127,7 @@
      <x>0</x>
      <y>0</y>
      <width>1280</width>
-     <height>21</height>
+     <height>25</height>
     </rect>
    </property>
    <property name="defaultUp">
@@ -142,6 +142,7 @@
       <string>Version</string>
      </property>
      <addaction name="action_vers_1_12_1"/>
+     <addaction name="action_vers_2_0_3"/>
      <addaction name="action_vers_2_4_3"/>
      <addaction name="action_vers_3_3_5"/>
     </widget>
@@ -230,6 +231,14 @@
   <action name="action_help">
    <property name="text">
     <string>Help</string>
+   </property>
+  </action>
+  <action name="action_vers_2_0_3">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>2.0.3</string>
    </property>
   </action>
  </widget>

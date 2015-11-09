@@ -45,8 +45,8 @@ class main_window(QtGui.QMainWindow):
         self.results.itemDoubleClicked.connect(self.open_spell)
 
         # Version menu connections
-        self.version_boxes = [self.action_vers_1_12_1, self.action_vers_2_4_3,
-            self.action_vers_3_3_5]
+        self.version_boxes = [self.action_vers_1_12_1, self.action_vers_2_0_3,
+            self.action_vers_2_4_3, self.action_vers_3_3_5]
         for action in self.version_boxes:
             action.toggled.connect(self.set_vers)
         # Code completion menu connection
@@ -64,6 +64,8 @@ class main_window(QtGui.QMainWindow):
         opts = self.parse_config()
         if opts['version'] == '1.12.1':
             self.action_vers_1_12_1.setChecked(True)
+        elif opts['version'] == '2.0.3':
+            self.action_vers_2_0_3.setChecked(True)
         elif opts['version'] == '2.4.3':
             self.action_vers_2_4_3.setChecked(True)
         elif opts['version'] == '3.3.5':

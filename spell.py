@@ -205,6 +205,8 @@ class Spells:
     def _mapping_for_vers(self, vers_str):
         if vers_str == '1.12.1':
             return _1_12_1_mappings()
+        elif vers_str == '2.0.3':
+            return _2_0_3_mappings()
         elif vers_str == '2.4.3':
             return _2_4_3_mappings()
         elif vers_str == '3.3.5':
@@ -396,6 +398,70 @@ def _1_12_1_mappings():
         dbc.Mapping(164, 'int',   'spell_class'),
         dbc.Mapping(165, 'int',   'prevention'),
         dbc.Mapping(167, 'float', 'dmg_multiplier', count = 3),
+    ]
+
+def _2_0_3_mappings():
+    return [
+        dbc.Mapping(0,   'int',   'id'),
+        dbc.Mapping(1,   'int',   'school_mask',
+            post_process = lambda x, _: (1 << x)),
+        dbc.Mapping(2,   'int',   'category'),
+        dbc.Mapping(4,   'int',   'dispel'),
+        dbc.Mapping(5,   'int',   'mechanic'),
+        dbc.Mapping(6,   'int',   'attr', count = 6),
+        dbc.Mapping(12,  'int',   'stances'),
+        dbc.Mapping(13,  'int',   'stances_not'),
+        dbc.Mapping(14,  'int',   'target_mask'),
+        dbc.Mapping(21,  'int',   'cast_time_index'),
+        dbc.Mapping(22,  'int',   'cooldown'),
+        dbc.Mapping(23,  'int',   'category_cooldown'),
+        dbc.Mapping(24,  'int',   'interrupt_flags'),
+        dbc.Mapping(25,  'int',   'aura_interrupt_flags'),
+        dbc.Mapping(26,  'int',   'channel_interrupt_flags'),
+        dbc.Mapping(27,  'int',   'proc_flags'),
+        dbc.Mapping(28,  'int',   'proc_chance'),
+        dbc.Mapping(29,  'int',   'proc_charges'),
+        dbc.Mapping(30,  'int',   'max_level'),
+        dbc.Mapping(31,  'int',   'base_level'),
+        dbc.Mapping(32,  'int',   'level'),
+        dbc.Mapping(33,  'int',   'duration_index'),
+        dbc.Mapping(34,  'int',   'power_type'),
+        dbc.Mapping(35,  'int',   'power'),
+        dbc.Mapping(39,  'int',   'range_index'),
+        dbc.Mapping(61,  'sint',  'item_class'),
+        dbc.Mapping(62,  'int',   'item_subclass', post_process =
+            lambda x, _: 0 if x == 0xFFFFFFFF else x),
+        dbc.Mapping(63,  'int',   'inv_slot'),
+        dbc.Mapping(64,  'int',   'effect', count = 3),
+        dbc.Mapping(67,  'int',   'die_sides', count = 3),
+        dbc.Mapping(70,  'int',   'base_dice', count = 3),
+        dbc.Mapping(76,  'float', 'real_points_per_level', count = 3),
+        dbc.Mapping(79,  'sint',  'base_points', count = 3),
+        dbc.Mapping(82,  'sint',  'mechanic_effect', count = 3),
+        dbc.Mapping(85,  'int',   'target_a', count = 3),
+        dbc.Mapping(88,  'int',   'target_b', count = 3),
+        dbc.Mapping(91,  'int',   'radius_index', count = 3),
+        dbc.Mapping(94,  'int',   'aura', count = 3),
+        dbc.Mapping(97,  'int',   'amplitude', count = 3),
+        dbc.Mapping(100, 'float', 'multiple_value', count = 3),
+        dbc.Mapping(103, 'int',   'chain', count = 3),
+        dbc.Mapping(109, 'int',   'misc_a', count = 3),
+        dbc.Mapping(112, 'int',   'misc_b', count = 3),
+        dbc.Mapping(115, 'int',   'trigger', count = 3),
+        dbc.Mapping(117, 'float', 'points_per_cp', count = 3),
+        dbc.Mapping(120, 'int',   'icon_id'),
+        dbc.Mapping(123, 'str',   'name'),
+        dbc.Mapping(132, 'str',   'rank'),
+        dbc.Mapping(150, 'str',   'tooltip'),
+        dbc.Mapping(160, 'int',   'gcd_category'),
+        dbc.Mapping(161, 'int',   'gcd'),
+        dbc.Mapping(162, 'int',   'max_target_level'),
+        dbc.Mapping(163, 'int',   'spell_family'),
+        dbc.Mapping(164, 'long',  'spell_mask'),
+        dbc.Mapping(166, 'int',   'max_targets'),
+        dbc.Mapping(167, 'int',   'spell_class'),
+        dbc.Mapping(168, 'int',   'prevention'),
+        dbc.Mapping(170, 'float', 'dmg_multiplier', count = 3),
     ]
 
 def _2_4_3_mappings():
