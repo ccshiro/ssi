@@ -122,6 +122,9 @@ class SpellWidget(QtWebKit.QWebView):
             '${RANGE_INDEX}': self.spell.range_index,
             '${RANGE_MIN}': int(self.spells.range(self.spell).min),
             '${RANGE_MAX}': int(self.spells.range(self.spell).max),
+            '${SPEED}': ('%.1f yds/sec' % self.spell.speed) if self.spell.speed >
+                0 else 'instant',
+            '${STACKS}': self.spell.stacks,
             '${CAST_TIME_INDEX}': self.spell.cast_time_index,
             '${CAST_TIME_HUMAN}':
                 self._human_time(self.spells.cast_time(self.spell)),

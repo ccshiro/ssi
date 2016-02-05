@@ -183,7 +183,8 @@ class CodeWidget(QtGui.QTextEdit):
               'misc_a', 'misc_b', 'trigger', 'points_per_cp', 'icon_id',
               'name', 'rank', 'tooltip', 'gcd_category', 'gcd',
               'max_target_level', 'spell_family', 'spell_mask', 'max_targets',
-              'spell_class', 'prevention', 'dmg_multiplier', 'school_mask' ]
+              'spell_class', 'prevention', 'dmg_multiplier', 'school_mask',
+              'stacks', 'speed' ]
         return s
 
     def get_spells_completers(self):
