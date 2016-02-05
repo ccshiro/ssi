@@ -34,7 +34,7 @@ class DbcEntry:
     pass
 
 class Dbc:
-    def __init__(self, filename, mappings, index, type=DbcEntry,
+    def __init__(self, filename, mappings, index=None, type=DbcEntry,
         custom_size = False):
         """DBC file is assumed to be little-endian encoded"""
         """Note: most dbcs have all fields as 4 byte, but not all do. If you set
@@ -75,7 +75,10 @@ class Dbc:
         self.table = {}
         for i in range(0, rows):
             item = self._map_single(bin_blob[i], string_table)
-            self.table[getattr(item, self.index)] = item
+            if self.index == None:
+                self.table[i] = item
+            else:
+                self.table[getattr(item, self.index)] = item
 
     def _map_single(self, raw, string_table):
         entry = self.type()
