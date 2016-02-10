@@ -45,8 +45,9 @@ class main_window(QtGui.QMainWindow):
         self.results.itemDoubleClicked.connect(self.open_spell)
 
         # Version menu connections
-        self.version_boxes = [self.action_vers_1_12_1, self.action_vers_2_0_3,
-            self.action_vers_2_4_3, self.action_vers_3_3_5]
+        self.version_boxes = [self.action_vers_1_9_0, self.action_vers_1_12_1,
+            self.action_vers_2_0_3, self.action_vers_2_4_3,
+            self.action_vers_3_3_5]
         for action in self.version_boxes:
             action.toggled.connect(self.set_vers)
         # Code completion menu connection

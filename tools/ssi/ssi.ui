@@ -141,6 +141,7 @@
      <property name="title">
       <string>Version</string>
      </property>
+     <addaction name="action_vers_1_9_0"/>
      <addaction name="action_vers_1_12_1"/>
      <addaction name="action_vers_2_0_3"/>
      <addaction name="action_vers_2_4_3"/>
@@ -239,6 +240,14 @@
    </property>
    <property name="text">
     <string>2.0.3</string>
+   </property>
+  </action>
+  <action name="action_vers_1_9_0">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>1.9.0</string>
    </property>
   </action>
  </widget>
